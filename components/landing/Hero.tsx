@@ -25,8 +25,8 @@ const scaleIn: Variants = {
 
 export function Hero() {
   return (
-    <section className="w-full py-10 md:py-16">
-      <div className="container mx-auto max-w-7xl px-6">
+    <section className="w-full min-h-screen snap-start flex items-center">
+      <div className="container mx-auto max-w-7xl px-6 py-6 md:py-8">
         <motion.div
           className="grid gap-8 md:grid-cols-2 items-center w-full"
           initial="hidden"

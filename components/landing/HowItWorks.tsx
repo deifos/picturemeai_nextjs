@@ -17,8 +17,8 @@ const staggerContainer: Variants = {
 
 export function HowItWorks() {
   return (
-    <section className="w-full py-16" id="how-it-works">
-      <div className="container mx-auto max-w-7xl px-6">
+    <section className="w-full min-h-screen snap-start flex items-center" id="how-it-works">
+      <div className="container mx-auto max-w-7xl px-6 py-16">
         <motion.h2 className={title({ size: "md", fullWidth: true })} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           How it works
         </motion.h2>

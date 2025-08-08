@@ -18,8 +18,8 @@ const staggerContainer: Variants = {
 
 export function Pricing() {
   return (
-    <section className="w-full py-16" id="pricing">
-      <div className="container mx-auto max-w-7xl px-6">
+    <section className="w-full min-h-screen snap-start flex items-center" id="pricing">
+      <div className="container mx-auto max-w-7xl px-6 py-16">
         <motion.h2 className={title({ size: "md", fullWidth: true })} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}>
           Simple pricing
         </motion.h2>

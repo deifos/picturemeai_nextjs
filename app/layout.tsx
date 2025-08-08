@@ -52,7 +52,7 @@ export default function RootLayout({
               <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(56,189,248,0.10),rgba(232,121,249,0.10),rgba(59,130,246,0.10),rgba(56,189,248,0.10))]" />
             </div>
             <Navbar />
-            <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+            <main className="pt-0 flex-grow snap-y snap-mandatory">
               {children}
             </main>
             <footer className="w-full flex items-center justify-center py-3">
