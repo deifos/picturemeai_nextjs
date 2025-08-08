@@ -39,3 +39,5 @@ yarn.lock
 package-lock.json
 bun.lockb
 .env
+
+/app/generated/prisma

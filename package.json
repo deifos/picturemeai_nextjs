@@ -19,10 +19,12 @@
     "@heroui/link": "2.2.21",
     "@heroui/listbox": "2.3.23",
     "@heroui/navbar": "2.2.22",
+    "@heroui/select": "^2.4.25",
     "@heroui/snippet": "2.2.25",
     "@heroui/switch": "2.2.22",
     "@heroui/system": "2.4.20",
     "@heroui/theme": "2.4.20",
+    "@prisma/client": "^6.13.0",
     "@react-aria/ssr": "3.9.10",
     "@react-aria/visually-hidden": "3.8.26",
     "better-auth": "^1.3.4",
@@ -57,8 +59,10 @@
     "globals": "16.0.0",
     "postcss": "8.5.6",
     "prettier": "3.5.3",
+    "prisma": "^6.13.0",
     "tailwind-variants": "2.0.1",
     "tailwindcss": "4.1.11",
+    "tsx": "^4.20.3",
     "typescript": "5.6.3"
   }
 }
