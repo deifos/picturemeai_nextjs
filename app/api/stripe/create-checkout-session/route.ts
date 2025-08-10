@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
+
+import { auth } from '@/lib/auth';
 import { stripe } from '@/lib/stripe';
 import prisma from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-    
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -15,13 +16,16 @@ export async function POST(request: NextRequest) {
     const { priceId } = await request.json();
 
     if (!priceId) {
-      return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Price ID is required' },
+        { status: 400 }
+      );
     }
 
     // Determine product details based on price ID
     let productName: string;
     let credits: number;
-    
+
     if (priceId === process.env.NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID) {
       productName = 'Starter';
       credits = 20;
@@ -85,6 +89,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ sessionId: checkoutSession.id });
   } catch (error) {
     console.error('Error creating checkout session:', error);
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

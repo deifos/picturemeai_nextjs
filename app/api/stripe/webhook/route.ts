@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import Stripe from 'stripe';
+
 import { stripe } from '@/lib/stripe';
 import prisma from '@/lib/prisma';
-import Stripe from 'stripe';
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
@@ -16,22 +17,29 @@ export async function POST(request: NextRequest) {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
+
       return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
     switch (event.type) {
       case 'checkout.session.completed':
-        await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session);
+        await handleCheckoutSessionCompleted(
+          event.data.object as Stripe.Checkout.Session
+        );
         break;
-      
+
       case 'payment_intent.succeeded':
-        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent);
+        await handlePaymentIntentSucceeded(
+          event.data.object as Stripe.PaymentIntent
+        );
         break;
-      
+
       case 'payment_intent.payment_failed':
-        await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent);
+        await handlePaymentIntentFailed(
+          event.data.object as Stripe.PaymentIntent
+        );
         break;
-      
+
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
@@ -39,24 +47,35 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('Webhook error:', error);
-    return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
+
+    return NextResponse.json(
+      { error: 'Webhook handler failed' },
+      { status: 500 }
+    );
   }
 }
 
-async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session
+) {
   try {
     const { userId, productName, credits } = session.metadata!;
-    
+
     if (!userId || !productName || !credits) {
-      console.error('Missing required metadata:', { userId, productName, credits });
+      console.error('Missing required metadata:', {
+        userId,
+        productName,
+        credits,
+      });
+
       return;
     }
-    
+
     // We need to fetch the session with line items to get the product ID
     const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-      expand: ['line_items.data.price.product']
+      expand: ['line_items.data.price.product'],
     });
-    
+
     // Create purchase record
     await prisma.purchase.create({
       data: {
@@ -64,9 +83,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
         stripeSessionId: session.id,
         stripePaymentIntentId: session.payment_intent as string,
         stripePriceId: fullSession.line_items?.data[0]?.price?.id || '',
-        stripeProductId: (typeof fullSession.line_items?.data[0]?.price?.product === 'string' 
-          ? fullSession.line_items?.data[0]?.price?.product 
-          : fullSession.line_items?.data[0]?.price?.product?.id) || '',
+        stripeProductId:
+          (typeof fullSession.line_items?.data[0]?.price?.product === 'string'
+            ? fullSession.line_items?.data[0]?.price?.product
+            : fullSession.line_items?.data[0]?.price?.product?.id) || '',
         productName,
         totalCredits: parseInt(credits),
         creditsRemaining: parseInt(credits),
@@ -86,8 +106,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       },
     });
 
-    console.log(`✅ Purchase completed for user ${userId}: ${credits} credits added`);
-    
+    console.log(
+      `✅ Purchase completed for user ${userId}: ${credits} credits added`
+    );
+
     // Broadcast credits update to any connected clients
     // This will be picked up by the credits store if the user is on the page
   } catch (error) {
@@ -95,7 +117,9 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   }
 }
 
-async function handlePaymentIntentSucceeded(paymentIntent: Stripe.PaymentIntent) {
+async function handlePaymentIntentSucceeded(
+  paymentIntent: Stripe.PaymentIntent
+) {
   try {
     // Update purchase status if needed
     await prisma.purchase.updateMany({

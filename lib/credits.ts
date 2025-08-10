@@ -5,11 +5,14 @@ export async function getUserCredits(userId: string): Promise<number> {
     where: { id: userId },
     select: { availableCredits: true },
   });
-  
+
   return user?.availableCredits || 0;
 }
 
-export async function deductCredits(userId: string, creditsToDeduct: number = 1): Promise<boolean> {
+export async function deductCredits(
+  userId: string,
+  creditsToDeduct: number = 1
+): Promise<boolean> {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -41,11 +44,15 @@ export async function deductCredits(userId: string, creditsToDeduct: number = 1)
     });
 
     let remainingToDeduct = creditsToDeduct;
+
     for (const purchase of purchases) {
       if (remainingToDeduct <= 0) break;
 
-      const deductFromThisPurchase = Math.min(remainingToDeduct, purchase.creditsRemaining);
-      
+      const deductFromThisPurchase = Math.min(
+        remainingToDeduct,
+        purchase.creditsRemaining
+      );
+
       await prisma.purchase.update({
         where: { id: purchase.id },
         data: {
@@ -64,6 +71,7 @@ export async function deductCredits(userId: string, creditsToDeduct: number = 1)
     return true;
   } catch (error) {
     console.error('Error deducting credits:', error);
+
     return false;
   }
 }

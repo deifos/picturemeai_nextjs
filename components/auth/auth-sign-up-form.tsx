@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { useState, FormEvent } from "react";
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Card, CardBody } from "@heroui/card";
-import { Input } from "@heroui/input";
-import { Button } from "@heroui/button";
-import { Link } from "@heroui/link";
-import { GoogleIcon } from "@/components/icons";
-import { authClient } from "@/lib/auth-client";
+import { useState, FormEvent } from 'react';
+import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
+import { Card, CardBody } from '@heroui/card';
+import { Input } from '@heroui/input';
+import { Button } from '@heroui/button';
+import { Link } from '@heroui/link';
 
-interface AuthSignUpFormProps extends React.ComponentProps<"div"> {}
+import { GoogleIcon } from '@/components/icons';
+import { authClient } from '@/lib/auth-client';
+
+interface AuthSignUpFormProps extends React.ComponentProps<'div'> {}
 
 export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const inviteToken = searchParams.get("invite") || undefined;
-  const returnTo = searchParams.get("returnTo") || undefined;
+  const inviteToken = searchParams.get('invite') || undefined;
+  const returnTo = searchParams.get('returnTo') || undefined;
   const callbackURL = returnTo;
 
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
@@ -31,21 +31,22 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
     try {
       setIsLoading(true);
       setError(null);
-      
-      let redirectURL = "/dashboard";
+
+      let redirectURL = '/dashboard';
+
       if (inviteToken) {
         redirectURL = `/invite/${inviteToken}`;
       } else if (callbackURL) {
         redirectURL = callbackURL;
       }
-      
+
       await authClient.signIn.social({
-        provider: "google",
+        provider: 'google',
         callbackURL: redirectURL,
       });
     } catch (err) {
-      setError("Failed to sign up with Google. Please try again.");
-      console.error("Google auth error:", err);
+      setError('Failed to sign up with Google. Please try again.');
+      console.error('Google auth error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -57,19 +58,22 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
     setError(null);
 
     if (!firstName || !lastName || !email || !password) {
-      setError("All fields are required.");
+      setError('All fields are required.');
       setIsLoading(false);
+
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters long.");
+      setError('Password must be at least 8 characters long.');
       setIsLoading(false);
+
       return;
     }
 
     try {
-      let redirectURL = "/auth/email-verified";
+      let redirectURL = '/auth/email-verified';
+
       if (inviteToken) {
         redirectURL += `?invite=${inviteToken}`;
       }
@@ -86,15 +90,16 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
           onSuccess: () => {
             setSuccess(true);
           },
-          onError: (ctx: any) => setError(ctx.error.message || "Sign up failed"),
+          onError: (ctx: any) =>
+            setError(ctx.error.message || 'Sign up failed'),
         }
       );
 
       if (error) {
-        setError(error.message || "Sign up failed");
+        setError(error.message || 'Sign up failed');
       }
     } catch {
-      setError("An unexpected error occurred");
+      setError('An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -103,41 +108,51 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
   // Success state
   if (success) {
     return (
-      <div className={`flex flex-col gap-6 ${className ?? ""}`} {...props}>
-        <Card className="overflow-hidden p-0">
-          <div className="grid p-0 md:grid-cols-2">
-            <CardBody className="p-6 md:p-8">
-              <div className="flex flex-col items-center text-center space-y-6">
-                <div className="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center">
-                  <svg className="w-8 h-8 text-success-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+      <div className={`flex flex-col gap-6 ${className ?? ''}`} {...props}>
+        <Card className='overflow-hidden p-0'>
+          <div className='grid p-0 md:grid-cols-2'>
+            <CardBody className='p-6 md:p-8'>
+              <div className='flex flex-col items-center text-center space-y-6'>
+                <div className='w-16 h-16 bg-success-100 rounded-full flex items-center justify-center'>
+                  <svg
+                    className='w-8 h-8 text-success-600'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
+                    <path
+                      d='M5 13l4 4L19 7'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                    />
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold mb-2">Account Created!</h1>
-                  <p className="text-default-500">
-                    Please check your email for a verification link. You need to verify your email
-                    before you can sign in.
+                  <h1 className='text-2xl font-bold mb-2'>Account Created!</h1>
+                  <p className='text-default-500'>
+                    Please check your email for a verification link. You need to
+                    verify your email before you can sign in.
                   </p>
                 </div>
-                <div className="text-center text-sm">
-                  Already verified?{" "}
+                <div className='text-center text-sm'>
+                  Already verified?{' '}
                   <Link
-                    href={`/auth/sign-in${inviteToken ? `?invite=${inviteToken}` : ""}`}
-                    className="text-primary underline"
+                    className='text-primary underline'
+                    href={`/auth/sign-in${inviteToken ? `?invite=${inviteToken}` : ''}`}
                   >
                     Sign in
                   </Link>
                 </div>
               </div>
             </CardBody>
-            <div className="relative hidden md:block">
+            <div className='relative hidden md:block'>
               <Image
-                src="/images/auth-image.png"
-                alt="Authentication background"
                 fill
-                className="object-cover dark:brightness-[0.2] dark:grayscale"
                 priority
+                alt='Authentication background'
+                className='object-cover dark:brightness-[0.2] dark:grayscale'
+                src='/images/auth-image.png'
               />
             </div>
           </div>
@@ -147,27 +162,33 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
   }
 
   return (
-    <div className={`flex flex-col gap-6 ${className ?? ""}`} {...props}>
-      <Card className="overflow-hidden p-0">
-        <div className="grid p-0 md:grid-cols-2">
-          <CardBody className="p-6 md:p-8">
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Create your account</h1>
-                <p className="text-default-500">
+    <div className={`flex flex-col gap-6 ${className ?? ''}`} {...props}>
+      <Card className='overflow-hidden p-0'>
+        <div className='grid p-0 md:grid-cols-2'>
+          <CardBody className='p-6 md:p-8'>
+            <div className='flex flex-col gap-6'>
+              <div className='flex flex-col items-center text-center'>
+                <h1 className='text-2xl font-bold'>Create your account</h1>
+                <p className='text-default-500'>
                   {inviteToken
-                    ? "Create an account to accept your team invitation"
-                    : "Sign up for your PictureMe AI account"}
+                    ? 'Create an account to accept your team invitation'
+                    : 'Sign up for your PictureMe AI account'}
                 </p>
               </div>
 
               {error && (
-                <div className="rounded-md bg-danger-50/20 p-3 border border-danger-200 text-danger-600 text-sm">
+                <div className='rounded-md bg-danger-50/20 p-3 border border-danger-200 text-danger-600 text-sm'>
                   {error}
-                  {(error.includes("already exists") || error.includes("already taken")) && (
-                    <div className="mt-2 pt-2 border-t border-danger-200">
-                      <p className="text-xs mb-1">Account already exists but not verified?</p>
-                      <Link href="/auth/resend-verification" className="text-primary underline hover:no-underline">
+                  {(error.includes('already exists') ||
+                    error.includes('already taken')) && (
+                    <div className='mt-2 pt-2 border-t border-danger-200'>
+                      <p className='text-xs mb-1'>
+                        Account already exists but not verified?
+                      </p>
+                      <Link
+                        className='text-primary underline hover:no-underline'
+                        href='/auth/resend-verification'
+                      >
                         Resend verification email →
                       </Link>
                     </div>
@@ -176,102 +197,114 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
               )}
 
               {/* Google Sign Up */}
-              <div className="grid grid-cols-1 gap-4">
+              <div className='grid grid-cols-1 gap-4'>
                 <Button
-                  variant="bordered"
-                  onPress={handleGoogleAuth}
+                  className='w-full'
                   isDisabled={isLoading}
-                  className="w-full"
+                  variant='bordered'
+                  onPress={handleGoogleAuth}
                 >
-                  <GoogleIcon className="mr-2" size={16} />
+                  <GoogleIcon className='mr-2' size={16} />
                   Continue with Google
                 </Button>
               </div>
 
-              <div className="relative">
-                <div className="border-t border-default-200" />
-                <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-content1 px-2 text-xs text-default-500 uppercase">
+              <div className='relative'>
+                <div className='border-t border-default-200' />
+                <span className='absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 bg-content1 px-2 text-xs text-default-500 uppercase'>
                   Or continue with email
                 </span>
               </div>
 
               {/* Email/Password Form */}
-              <form onSubmit={onSubmit} className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm">First name</label>
+              <form className='flex flex-col gap-4' onSubmit={onSubmit}>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div className='flex flex-col gap-2'>
+                    <label className='text-sm'>First name</label>
                     <Input
-                      type="text"
-                      placeholder="John"
+                      placeholder='John'
+                      type='text'
                       value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      onChange={e => setFirstName(e.target.value)}
                     />
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm">Last name</label>
+                  <div className='flex flex-col gap-2'>
+                    <label className='text-sm'>Last name</label>
                     <Input
-                      type="text"
-                      placeholder="Doe"
+                      placeholder='Doe'
+                      type='text'
                       value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
+                      onChange={e => setLastName(e.target.value)}
                     />
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm">Email</label>
+                <div className='flex flex-col gap-2'>
+                  <label className='text-sm'>Email</label>
                   <Input
-                    type="email"
-                    placeholder="john@example.com"
+                    placeholder='john@example.com'
+                    type='email'
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={e => setEmail(e.target.value)}
                   />
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <label className="text-sm">Password</label>
+                <div className='flex flex-col gap-2'>
+                  <label className='text-sm'>Password</label>
                   <Input
-                    type="password"
-                    placeholder="••••••••"
+                    placeholder='••••••••'
+                    type='password'
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={e => setPassword(e.target.value)}
                   />
-                  <p className="text-xs text-default-400">
+                  <p className='text-xs text-default-400'>
                     At least 8 characters with uppercase, lowercase, and number
                   </p>
                 </div>
 
-                <Button type="submit" isDisabled={isLoading} className="w-full">
-                  {isLoading ? "Creating account..." : "Create account"}
+                <Button className='w-full' isDisabled={isLoading} type='submit'>
+                  {isLoading ? 'Creating account...' : 'Create account'}
                 </Button>
               </form>
 
-              <div className="text-center text-sm">
-                Already have an account?{" "}
+              <div className='text-center text-sm'>
+                Already have an account?{' '}
                 <Link
-                  href={`/auth/sign-in${inviteToken ? `?invite=${inviteToken}` : ""}`}
-                  className="text-primary underline"
+                  className='text-primary underline'
+                  href={`/auth/sign-in${inviteToken ? `?invite=${inviteToken}` : ''}`}
                 >
                   Sign in
                 </Link>
               </div>
             </div>
           </CardBody>
-          <div className="relative hidden md:block">
+          <div className='relative hidden md:block'>
             <Image
-              src="/images/auth-image.png"
-              alt="Authentication background"
               fill
-              className="object-cover dark:brightness-[0.2] dark:grayscale"
               priority
+              alt='Authentication background'
+              className='object-cover dark:brightness-[0.2] dark:grayscale'
+              src='/images/auth-image.png'
             />
           </div>
         </div>
       </Card>
-      <div className="text-default-500 text-center text-xs">
-        By clicking continue, you agree to our{" "}
-        <a href="/terms" className="underline hover:text-primary transition-colors">Terms of Service</a> and{" "}
-        <a href="/privacy" className="underline hover:text-primary transition-colors">Privacy Policy</a>.
+      <div className='text-default-500 text-center text-xs'>
+        By clicking continue, you agree to our{' '}
+        <a
+          className='underline hover:text-primary transition-colors'
+          href='/terms'
+        >
+          Terms of Service
+        </a>{' '}
+        and{' '}
+        <a
+          className='underline hover:text-primary transition-colors'
+          href='/privacy'
+        >
+          Privacy Policy
+        </a>
+        .
       </div>
     </div>
   );

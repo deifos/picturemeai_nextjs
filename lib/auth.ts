@@ -3,7 +3,10 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 
 import prisma from '@/lib/prisma';
 import { sendEmail } from '@/app/services/email-service';
-import { getPasswordResetEmail, getVerificationEmail } from '@/app/services/auth-email-service';
+import {
+  getPasswordResetEmail,
+  getVerificationEmail,
+} from '@/app/services/auth-email-service';
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: 'postgresql',
@@ -11,7 +14,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, url, token }) => {
+    sendResetPassword: async ({ user, url }) => {
       // Extract user name or use email username as fallback
       const name = user.name || user.email.split('@')[0];
 

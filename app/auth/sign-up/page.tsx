@@ -1,6 +1,7 @@
-import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+import { auth } from '@/lib/auth';
 import { AuthSignUpForm } from '@/components/auth/auth-sign-up-form';
 
 interface SignUpPageProps {
@@ -32,8 +33,8 @@ export default async function SignUpPage({ searchParams }: SignUpPageProps) {
   }
 
   return (
-    <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm md:max-w-3xl relative">
+    <div className='bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10'>
+      <div className='w-full max-w-sm md:max-w-3xl relative'>
         <AuthSignUpForm />
       </div>
     </div>

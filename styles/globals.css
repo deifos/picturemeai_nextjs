@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @config "../hero.ts";
 
 /* Smooth scrolling for anchor links */

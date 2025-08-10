@@ -1,29 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
+
+import { auth } from '@/lib/auth';
 import { deductCredits, recordGeneration } from '@/lib/credits';
 
 export async function POST(request: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
-    
+
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { 
-      prompt, 
-      category, 
-      numImages, 
-      imageUrls, 
-      imageSize, 
-      style, 
-      renderingSpeed, 
-      falRequestId 
+    const {
+      prompt,
+      category,
+      numImages,
+      imageUrls,
+      imageSize,
+      style,
+      renderingSpeed,
+      falRequestId,
     } = await request.json();
 
     // Validate required fields
-    if (!prompt || !category || !numImages || !imageUrls || !Array.isArray(imageUrls)) {
+    if (
+      !prompt ||
+      !category ||
+      !numImages ||
+      !imageUrls ||
+      !Array.isArray(imageUrls)
+    ) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -32,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // Check and deduct credits (1 credit per generation)
     const creditsDeducted = await deductCredits(session.user.id, 1);
-    
+
     if (!creditsDeducted) {
       return NextResponse.json(
         { error: 'Insufficient credits' },
@@ -54,13 +61,14 @@ export async function POST(request: NextRequest) {
       creditsUsed: 1,
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       generationId: generation.id,
-      message: 'Generation recorded successfully'
+      message: 'Generation recorded successfully',
     });
   } catch (error) {
     console.error('Error processing generation:', error);
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

@@ -56,6 +56,7 @@ export const sendEmail = async ({
     return { success: true, response };
   } catch (error) {
     console.error('Failed to send email:', JSON.stringify(error, null, 2));
+
     return { success: false, error };
   }
 };

@@ -1,13 +1,16 @@
 /**
  * Authentication Email Service
- * 
+ *
  * Handles email templates for authentication flows
  */
 
 /**
  * Generate email verification template
  */
-export function getVerificationEmail(name: string, verificationUrl: string): string {
+export function getVerificationEmail(
+  name: string,
+  verificationUrl: string
+): string {
   return `
     <!DOCTYPE html>
     <html>
