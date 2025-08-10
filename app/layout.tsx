@@ -4,11 +4,11 @@ import { Link } from '@heroui/link';
 import Script from 'next/script';
 import clsx from 'clsx';
 
-import { Providers } from './providers';
-
 import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';
 import { ConditionalNavbar } from '@/components/conditional-navbar';
+
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {

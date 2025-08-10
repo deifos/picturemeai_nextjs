@@ -270,7 +270,7 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
                     onChange={e => setPassword(e.target.value)}
                   />
                   <p className='text-xs text-default-400'>
-                    At least 8 characters with uppercase, lowercase, and number
+                    At least 8 characters with uppercase, lowercase, and numbers
                   </p>
                 </div>
 

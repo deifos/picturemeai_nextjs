@@ -6,6 +6,7 @@ import _import from 'eslint-plugin-import';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import jsxA11Y from 'eslint-plugin-jsx-a11y';
 import prettier from 'eslint-plugin-prettier';
+import nextPlugin from '@next/eslint-plugin-next';
 import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
 import path from 'node:path';
@@ -45,23 +46,11 @@ export default defineConfig([
     '!**/react-shim.js',
     '!**/tsup.config.ts',
   ]),
+  ...compat.extends('next/core-web-vitals'),
   {
-    extends: fixupConfigRules(
-      compat.extends(
-        'plugin:react/recommended',
-        'plugin:prettier/recommended',
-        'plugin:react-hooks/recommended',
-        'plugin:jsx-a11y/recommended',
-        'plugin:@next/next/recommended'
-      )
-    ),
-
     plugins: {
-      react: fixupPluginRules(react),
       'unused-imports': unusedImports,
-      import: fixupPluginRules(_import),
       '@typescript-eslint': typescriptEslint,
-      'jsx-a11y': fixupPluginRules(jsxA11Y),
       prettier: fixupPluginRules(prettier),
     },
 
@@ -93,6 +82,9 @@ export default defineConfig([
     files: ['**/*.ts', '**/*.tsx'],
 
     rules: {
+      // Next.js recommended rules
+      ...nextPlugin.configs.recommended.rules,
+      
       'no-console': 'off', // Allow console statements for development
       'react/prop-types': 'off',
       'react/jsx-uses-react': 'off',
