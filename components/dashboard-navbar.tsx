@@ -33,11 +33,7 @@ export const DashboardNavbar = ({ userId }: DashboardNavbarProps) => {
 
       <NavbarContent className='basis-1/5 sm:basis-full' justify='end'>
         <NavbarItem className='flex gap-4 items-center'>
-          {userId && (
-            <div className='hidden sm:block'>
-              <CreditsDisplay compact userId={userId} />
-            </div>
-          )}
+          {userId && <CreditsDisplay compact userId={userId} />}
           <ThemeSwitch />
           <UserMenu />
         </NavbarItem>
