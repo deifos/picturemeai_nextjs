@@ -5,7 +5,7 @@ import { motion, Variants } from 'framer-motion';
 import { Link } from '@heroui/link';
 
 import { title } from '@/components/primitives';
-import { XIcon } from '@/components/icons/XIcon';
+import { XIcon } from '@/components/icons';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },

@@ -15,6 +15,7 @@ interface SmoothScrollLinkProps {
     | 'warning'
     | 'danger';
   size?: 'sm' | 'md' | 'lg';
+  onClick?: () => void;
 }
 
 export function SmoothScrollLink({
@@ -23,11 +24,15 @@ export function SmoothScrollLink({
   className,
   color,
   size,
+  onClick,
 }: SmoothScrollLinkProps) {
   const router = useRouter();
   const pathname = usePathname();
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Call the onClick prop if provided
+    onClick?.();
+
     // Check if it's a hash link
     if (href.startsWith('/#')) {
       e.preventDefault();

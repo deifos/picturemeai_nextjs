@@ -153,7 +153,7 @@ export function AuthSignInForm({ className, ...props }: AuthSignInFormProps) {
                   variant='bordered'
                   onPress={handleGoogleAuth}
                 >
-                  <GoogleIcon className='mr-2' size={16} />
+                  <GoogleIcon className='mr-2 w-4 h-4' />
                   Continue with Google
                 </Button>
               </div>

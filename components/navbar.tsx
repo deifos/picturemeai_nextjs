@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Navbar as HeroUINavbar,
   NavbarContent,
@@ -10,6 +12,7 @@ import {
 import { link as linkStyles } from '@heroui/theme';
 import NextLink from 'next/link';
 import clsx from 'clsx';
+import { useState } from 'react';
 
 import { siteConfig } from '@/config/site';
 import { ThemeSwitch } from '@/components/theme-switch';
@@ -18,11 +21,15 @@ import { SmoothScrollLink } from '@/components/smooth-scroll-link';
 import { Logo } from '@/components/icons';
 
 export const Navbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <HeroUINavbar
-      className='backdrop-blur supports-[backdrop-filter]:bg-background/60'
+      className='backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-divider'
+      isMenuOpen={isMenuOpen}
       maxWidth='xl'
       position='sticky'
+      onMenuOpenChange={setIsMenuOpen}
     >
       <NavbarContent className='basis-1/5 sm:basis-full' justify='start'>
         <NavbarBrand as='li' className='gap-3 max-w-fit'>
@@ -79,6 +86,7 @@ export const Navbar = () => {
                 }
                 href={item.href}
                 size='lg'
+                onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}
               </SmoothScrollLink>

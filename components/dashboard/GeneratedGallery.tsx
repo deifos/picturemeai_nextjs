@@ -6,7 +6,7 @@ import { Spinner } from '@heroui/spinner';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { SafeImage } from '@/components/safe-image';
 import { ImageLightbox } from '@/components/image-lightbox';
-import { ZoomIcon } from '@/components/icons/ZoomIcon';
+import { ZoomIcon } from '@/components/icons';
 
 type GeneratedItem = { id: string; url: string };
 

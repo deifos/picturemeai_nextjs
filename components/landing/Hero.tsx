@@ -3,6 +3,7 @@
 import { Button } from '@heroui/button';
 import { Link } from '@heroui/link';
 import { Snippet } from '@heroui/snippet';
+import { Chip } from '@heroui/chip';
 import { motion, Variants } from 'framer-motion';
 import Image from 'next/image';
 
@@ -33,15 +34,18 @@ const scaleIn: Variants = {
 
 export function Hero() {
   return (
-    <section className='w-full min-h-screen snap-start flex items-center'>
-      <div className='container mx-auto max-w-7xl px-6 py-6 md:py-8'>
+    <section className='w-full min-h-screen snap-start flex items-center overflow-hidden'>
+      <div className='container mx-auto max-w-7xl px-4 sm:px-6 py-6 md:py-8 w-full'>
         <motion.div
           animate='visible'
-          className='grid gap-8 md:grid-cols-2 items-center w-full'
+          className='grid gap-6 sm:gap-8 md:grid-cols-2 items-center w-full'
           initial='hidden'
           variants={staggerContainer}
         >
-          <motion.div className='flex flex-col gap-4' variants={fadeUp}>
+          <motion.div
+            className='flex flex-col gap-4 w-full max-w-full'
+            variants={fadeUp}
+          >
             <h1 className={title({ size: 'lg' })}>
               Your face. Infinite looks.
               <br />
@@ -50,7 +54,7 @@ export function Hero() {
               </span>
             </h1>
             <motion.p
-              className={subtitle({ class: 'mt-2 md:w-3/4' })}
+              className={subtitle({ class: 'mt-2 md:w-3/4 max-w-full' })}
               variants={fadeUp}
             >
               Upload a single photo and get a consistent gallery of you across
@@ -76,26 +80,34 @@ export function Hero() {
                 See how it works
               </Button>
             </motion.div>
-            <motion.div className='mt-2' variants={fadeUp}>
+            <motion.div className='mt-2 w-full max-w-full' variants={fadeUp}>
               <Snippet
                 hideCopyButton
                 hideSymbol
-                className='bg-content2/50'
+                className='bg-content2/50 text-xs sm:text-sm max-w-full break-words'
                 variant='bordered'
               >
-                No training wait. No complexity. Just upload and generate.
+                <span className='block sm:hidden'>
+                  No training wait. Just upload & generate.
+                </span>
+                <span className='hidden sm:block'>
+                  No training wait. No complexity. Just upload and generate.
+                </span>
               </Snippet>
             </motion.div>
           </motion.div>
 
-          <motion.div className='flex justify-center' variants={scaleIn}>
+          <motion.div
+            className='flex justify-center w-full px-2 sm:px-0'
+            variants={scaleIn}
+          >
             <motion.div
               animate='visible'
-              className='w-full max-w-xl aspect-square'
+              className='w-full max-w-[280px] sm:max-w-[320px] md:max-w-xl aspect-square'
               initial='hidden'
               variants={staggerContainer}
             >
-              <div className='grid grid-cols-3 grid-rows-3 gap-3 h-full'>
+              <div className='grid grid-cols-3 grid-rows-3 gap-1 sm:gap-2 md:gap-3 h-full'>
                 {(() => {
                   const samples = [
                     '/images/sample1.png',
@@ -120,7 +132,7 @@ export function Hero() {
                     return (
                       <motion.div
                         key={i}
-                        className='relative rounded-2xl overflow-hidden border border-default-200 shadow-xl bg-content1/70'
+                        className='relative rounded-xl sm:rounded-2xl overflow-hidden border border-default-200 shadow-xl bg-content1/70'
                         variants={scaleIn}
                         whileHover={{ scale: 1.02 }}
                       >
@@ -130,6 +142,18 @@ export function Hero() {
                           className='object-cover'
                           src={src}
                         />
+                        {isCenter && (
+                          <div className='absolute bottom-1 sm:bottom-2 right-1 sm:right-2 z-10'>
+                            <Chip
+                              className='text-xs font-medium'
+                              color='secondary'
+                              size='sm'
+                              variant='solid'
+                            >
+                              Original
+                            </Chip>
+                          </div>
+                        )}
                       </motion.div>
                     );
                   });

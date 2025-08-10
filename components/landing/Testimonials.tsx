@@ -78,8 +78,8 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className='w-full min-h-screen snap-start flex items-center'>
-      <div className='container mx-auto max-w-7xl px-6 py-16'>
+    <section className='w-full min-h-screen snap-start flex items-center overflow-hidden'>
+      <div className='container mx-auto max-w-7xl px-4 sm:px-6 py-16 w-full'>
         <motion.h2
           className={title({
             size: 'md',
@@ -113,7 +113,7 @@ export function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <motion.div key={index} variants={fadeUp}>
               <Card className='bg-content1/60 border border-default-100 hover:border-primary/30 transition-colors h-full'>
-                <CardBody className='p-6'>
+                <CardBody className='p-4 sm:p-6'>
                   <div className='flex flex-col gap-4'>
                     {/* Rating stars */}
                     <div className='flex gap-1'>
@@ -133,11 +133,11 @@ export function Testimonials() {
 
                     {/* Sample images if available */}
                     {testimonial.images && (
-                      <div className='flex gap-4 mt-4'>
+                      <div className='flex gap-2 sm:gap-4 mt-4 overflow-hidden'>
                         {testimonial.images.map((image, imgIndex) => (
                           <div
                             key={imgIndex}
-                            className='relative w-32 h-32 rounded-xl overflow-hidden border-2 border-default-200 hover:border-primary/50 transition-colors cursor-pointer group'
+                            className='relative w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-xl overflow-hidden border-2 border-default-200 hover:border-primary/50 transition-colors cursor-pointer group flex-shrink-0'
                           >
                             <Image
                               fill
@@ -148,12 +148,12 @@ export function Testimonials() {
                             <div className='absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity' />
                           </div>
                         ))}
-                        <div className='flex items-center justify-center w-32 h-32 bg-gradient-to-br from-default-100 to-default-50 rounded-xl border-2 border-dashed border-default-300 hover:border-primary/50 transition-colors'>
+                        <div className='flex items-center justify-center w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 bg-gradient-to-br from-default-100 to-default-50 rounded-xl border-2 border-dashed border-default-300 hover:border-primary/50 transition-colors flex-shrink-0'>
                           <div className='text-center'>
-                            <span className='block text-default-600 text-lg font-medium'>
+                            <span className='block text-default-600 text-sm sm:text-lg font-medium'>
                               +18
                             </span>
-                            <span className='block text-default-400 text-sm'>
+                            <span className='block text-default-400 text-xs sm:text-sm'>
                               more
                             </span>
                           </div>
@@ -192,20 +192,24 @@ export function Testimonials() {
           viewport={{ once: true }}
           whileInView='visible'
         >
-          <div className='flex items-center justify-center gap-8 text-default-500'>
+          <div className='flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-default-500'>
             <div className='flex items-center gap-2'>
-              <span className='text-2xl'>⭐</span>
-              <span className='text-sm font-medium'>4.9/5 average rating</span>
+              <span className='text-xl sm:text-2xl'>⭐</span>
+              <span className='text-xs sm:text-sm font-medium'>
+                4.9/5 average rating
+              </span>
             </div>
-            <div className='hidden md:block w-px h-4 bg-default-300' />
+            <div className='hidden sm:block w-px h-4 bg-default-300' />
             <div className='flex items-center gap-2'>
-              <span className='text-2xl'>👥</span>
-              <span className='text-sm font-medium'>10,000+ happy users</span>
+              <span className='text-xl sm:text-2xl'>👥</span>
+              <span className='text-xs sm:text-sm font-medium'>
+                10,000+ happy users
+              </span>
             </div>
-            <div className='hidden md:block w-px h-4 bg-default-300' />
+            <div className='hidden sm:block w-px h-4 bg-default-300' />
             <div className='flex items-center gap-2'>
-              <span className='text-2xl'>🚀</span>
-              <span className='text-sm font-medium'>
+              <span className='text-xl sm:text-2xl'>🚀</span>
+              <span className='text-xs sm:text-sm font-medium'>
                 500k+ images generated
               </span>
             </div>

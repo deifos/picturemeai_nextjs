@@ -10,7 +10,7 @@ import { Spinner } from '@heroui/spinner';
 
 import { type IdeogramStyle, type ImageSize } from '@/lib/fal-client';
 import { ALL_CATEGORIES, type PromptCategory } from '@/lib/prompt-presets';
-import { RefreshIcon } from '@/components/icons/RefreshIcon';
+import { RefreshIcon } from '@/components/icons';
 
 interface GenerationSettingsPanelProps {
   category: PromptCategory;
