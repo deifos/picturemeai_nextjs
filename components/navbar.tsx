@@ -62,12 +62,12 @@ export const Navbar = () => {
       >
         <NavbarItem className='flex gap-2'>
           <ThemeSwitch />
-          <UserMenu />
+          <UserMenu onNavigate={() => setIsMenuOpen(false)} />
         </NavbarItem>
       </NavbarContent>
 
       <NavbarContent className='sm:hidden basis-1 pl-4' justify='end'>
-        <UserMenu />
+        <UserMenu onNavigate={() => setIsMenuOpen(false)} />
         <ThemeSwitch />
         <NavbarMenuToggle />
       </NavbarContent>

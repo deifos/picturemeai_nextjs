@@ -40,8 +40,13 @@ export function DashboardClient() {
   const [isLoadingExisting, setIsLoadingExisting] = useState(true);
 
   const canGenerate = useMemo(() => {
-    return !!previewUrl && creditInfo !== null && creditInfo.total > 0;
-  }, [previewUrl, creditInfo]);
+    return (
+      !!previewUrl &&
+      !!referenceUrl &&
+      creditInfo !== null &&
+      creditInfo.total > 0
+    );
+  }, [previewUrl, referenceUrl, creditInfo]);
 
   // Load existing generations and credits on component mount
   useEffect(() => {
@@ -97,6 +102,14 @@ export function DashboardClient() {
   const handleGenerate = async () => {
     if (!canGenerate) return;
 
+    // Ensure we have a reference image
+    if (!referenceUrl) {
+      setError(
+        'Please upload an image first. A reference image is required for generation.'
+      );
+      return;
+    }
+
     // Double-check credits before starting
     if (creditInfo === null || creditInfo.total <= 0) {
       setError(
@@ -123,7 +136,7 @@ export function DashboardClient() {
         imageSize: imageSize,
         style: style,
         renderingSpeed: 'BALANCED',
-        referenceImageUrl: referenceUrl ?? undefined,
+        referenceImageUrl: referenceUrl, // Always required now
       });
 
       if (

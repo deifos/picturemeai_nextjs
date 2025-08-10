@@ -13,7 +13,11 @@ import { useRouter } from 'next/navigation';
 
 import { useSession, signOut } from '@/lib/auth-client';
 
-export function UserMenu() {
+interface UserMenuProps {
+  onNavigate?: () => void;
+}
+
+export function UserMenu({ onNavigate }: UserMenuProps) {
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
@@ -31,6 +35,7 @@ export function UserMenu() {
         href='/auth/sign-in'
         size='sm'
         variant='flat'
+        onClick={() => onNavigate?.()}
       >
         Sign In
       </Button>
@@ -78,7 +83,12 @@ export function UserMenu() {
           <p className='font-semibold'>Signed in as</p>
           <p className='font-semibold text-default-600'>{userEmail}</p>
         </DropdownItem>
-        <DropdownItem key='dashboard' as={NextLink} href='/dashboard'>
+        <DropdownItem
+          key='dashboard'
+          as={NextLink}
+          href='/dashboard'
+          onClick={() => onNavigate?.()}
+        >
           Dashboard
         </DropdownItem>
 
