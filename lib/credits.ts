@@ -52,79 +52,107 @@ export async function deductCredits(
   creditsToDeduct: number = 1
 ): Promise<{ success: boolean; usedFreeCredit: boolean }> {
   try {
-    const { freeCredits, total } = await getTotalAvailableCredits(userId);
-
-    if (total < creditsToDeduct) {
-      return { success: false, usedFreeCredit: false }; // Insufficient credits
-    }
-
-    let usedFreeCredit = false;
-    let remainingToDeduct = creditsToDeduct;
-
-    // First, try to use free credits
-    if (freeCredits > 0 && remainingToDeduct > 0) {
-      const freeCreditsToUse = Math.min(freeCredits, remainingToDeduct);
-
-      await prisma.user.update({
+    // Use a transaction to prevent race conditions
+    const result = await prisma.$transaction(async tx => {
+      // Get current user data within the transaction
+      const user = await tx.user.findUnique({
         where: { id: userId },
-        data: {
-          freeCreditsUsed: {
-            increment: freeCreditsToUse,
-          },
+        select: {
+          availableCredits: true,
+          freeCreditsUsed: true,
         },
       });
 
-      remainingToDeduct -= freeCreditsToUse;
-      usedFreeCredit = true;
-    }
+      if (!user) {
+        throw new Error('User not found');
+      }
 
-    // Then, use paid credits if needed
-    if (remainingToDeduct > 0) {
-      // Deduct paid credits from user
-      await prisma.user.update({
-        where: { id: userId },
-        data: {
-          availableCredits: {
-            decrement: remainingToDeduct,
-          },
-        },
-      });
+      // Calculate available credits within transaction
+      const freeCreditsRemaining = Math.max(
+        0,
+        CREDITS_CONFIG.FREE_CREDITS_PER_USER - user.freeCreditsUsed
+      );
+      const totalAvailable = user.availableCredits + freeCreditsRemaining;
 
-      // Update purchase records (deduct from most recent first)
-      const purchases = await prisma.purchase.findMany({
-        where: {
-          userId,
-          creditsRemaining: { gt: 0 },
-          status: 'COMPLETED',
-        },
-        orderBy: { createdAt: 'desc' },
-      });
+      if (totalAvailable < creditsToDeduct) {
+        return { success: false, usedFreeCredit: false };
+      }
 
-      for (const purchase of purchases) {
-        if (remainingToDeduct <= 0) break;
+      let usedFreeCredit = false;
+      let remainingToDeduct = creditsToDeduct;
 
-        const deductFromThisPurchase = Math.min(
-          remainingToDeduct,
-          purchase.creditsRemaining
+      // First, try to use free credits
+      if (freeCreditsRemaining > 0 && remainingToDeduct > 0) {
+        const freeCreditsToUse = Math.min(
+          freeCreditsRemaining,
+          remainingToDeduct
         );
 
-        await prisma.purchase.update({
-          where: { id: purchase.id },
+        await tx.user.update({
+          where: { id: userId },
           data: {
-            creditsUsed: {
-              increment: deductFromThisPurchase,
-            },
-            creditsRemaining: {
-              decrement: deductFromThisPurchase,
+            freeCreditsUsed: {
+              increment: freeCreditsToUse,
             },
           },
         });
 
-        remainingToDeduct -= deductFromThisPurchase;
+        remainingToDeduct -= freeCreditsToUse;
+        usedFreeCredit = true;
       }
-    }
 
-    return { success: true, usedFreeCredit };
+      // Then, use paid credits if needed
+      if (remainingToDeduct > 0) {
+        // Deduct paid credits from user
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            availableCredits: {
+              decrement: remainingToDeduct,
+            },
+          },
+        });
+
+        // Update purchase records (deduct from most recent first)
+        const purchases = await tx.purchase.findMany({
+          where: {
+            userId,
+            creditsRemaining: { gt: 0 },
+            status: 'COMPLETED',
+          },
+          orderBy: { createdAt: 'desc' },
+        });
+
+        let purchaseDeductRemaining = remainingToDeduct;
+
+        for (const purchase of purchases) {
+          if (purchaseDeductRemaining <= 0) break;
+
+          const deductFromThisPurchase = Math.min(
+            purchaseDeductRemaining,
+            purchase.creditsRemaining
+          );
+
+          await tx.purchase.update({
+            where: { id: purchase.id },
+            data: {
+              creditsUsed: {
+                increment: deductFromThisPurchase,
+              },
+              creditsRemaining: {
+                decrement: deductFromThisPurchase,
+              },
+            },
+          });
+
+          purchaseDeductRemaining -= deductFromThisPurchase;
+        }
+      }
+
+      return { success: true, usedFreeCredit };
+    });
+
+    return result;
   } catch (error) {
     console.error('Error deducting credits:', error);
 
