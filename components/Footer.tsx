@@ -35,8 +35,7 @@ export function Footer() {
           href='https://x.com/deifosv'
           title='Find me on X'
         >
-          <XIcon className='w-3 h-3' />
-          <span>Find me on X</span>
+          Find me on <XIcon className='w-3 h-3' />
         </Link>
         <span className='text-default-200'>•</span>
         <Link

@@ -61,10 +61,13 @@ DIRECT_URL=your_direct_postgresql_connection_string
 # Authentication - Better Auth configuration
 
 BETTER_AUTH_SECRET=your_random_secret_key
-BETTER_AUTH_URL=http://localhost:3000
-NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
 
-# Google OAuth (optional)
+# CRITICAL: Use your production domain for production deployments
+
+NEXT_PUBLIC_APP_URL=http://localhost:3000 # Used by both client and server
+BETTER_AUTH_URL=http://localhost:3000 # Fallback server URL
+
+# Google OAuth (optional but recommended)
 
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
@@ -239,13 +242,49 @@ All hardcoded values are centralized in `config/app-config.ts`:
 
 ### Environment Variables for Production
 
-Make sure to update these for production:
+**CRITICAL**: Update these for production deployment to avoid "State not found" OAuth errors:
 
 \`\`\`env
+
+# Authentication URLs - MUST match your production domain
+
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
 BETTER_AUTH_URL=https://yourdomain.com
-NEXT_PUBLIC_BETTER_AUTH_URL=https://yourdomain.com
+
+# Email configuration
+
 EMAIL_FROM=noreply@yourdomain.com
+
+# Generate new secrets for production
+
+BETTER_AUTH_SECRET=your_secure_production_secret
 \`\`\`
+
+### Google OAuth Setup (Production)
+
+**Required** for Google sign-in to work in production:
+
+1. **Google Cloud Console Setup**:
+
+   - Go to [Google Cloud Console](https://console.cloud.google.com)
+   - Navigate to **APIs & Credentials** → **Credentials**
+   - Find your OAuth 2.0 Client ID
+
+2. **Update Authorized Origins**:
+
+   - Add your production domain: \`https://yourdomain.com\`
+   - Keep \`http://localhost:3000\` for local development
+
+3. **Update Authorized Redirect URIs**:
+
+   - Add: \`https://yourdomain.com/api/auth/callback/google\`
+   - Keep: \`http://localhost:3000/api/auth/callback/google\` for local development
+
+4. **Environment Variables**:
+   - Use the same \`GOOGLE_CLIENT_ID\` and \`GOOGLE_CLIENT_SECRET\` for both environments
+   - The OAuth redirect URLs will automatically resolve based on your \`NEXT_PUBLIC_APP_URL\`
+
+> **⚠️ Important**: If you don't update the authorized origins and redirect URIs in Google Cloud Console, users will get "Error 400: redirect_uri_mismatch" when trying to sign in with Google in production.
 
 ## 🧪 Development
 
