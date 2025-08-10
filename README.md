@@ -1,21 +1,17 @@
-# 🎯 PictureMe AI
+# PictureMe AI
 
 **AI-Powered Professional Headshots** - Generate stunning professional headshots from your photos using cutting-edge AI technology.
 
-## ✨ Features
+### Features
 
 - 🖼️ **AI Image Generation** - Transform personal photos into professional headshots using [FAL.AI](https://fal.ai)
 - 🆓 **Free Trial** - New users get 1 free image generation (no credit card required)
 - 💳 **Credit-Based System** - Pay-per-use model with two convenient packages
 - 🎨 **Multiple Styles** - Choose from Auto, Realistic, or Fiction styles
-- 📐 **Various Formats** - Portrait, Square, and Landscape orientations
 - 🔐 **Secure Authentication** - Google OAuth and email/password with Better Auth
 - 💰 **Stripe Integration** - Secure payment processing
-- 📧 **Email Notifications** - Account verification and password reset emails
-- 📱 **Responsive Design** - Works beautifully on all devices
-- ⚡ **Fast Generation** - Direct FAL.AI integration for optimal performance
 
-## 🛠️ Tech Stack
+### Tech Stack
 
 - **Framework**: [Next.js 15](https://nextjs.org) with App Router
 - **UI Components**: [HeroUI](https://heroui.com)
@@ -25,103 +21,45 @@
 - **AI Generation**: [FAL.AI](https://fal.ai) (Ideogram Character model)
 - **Payments**: [Stripe](https://stripe.com)
 - **Email**: [ZeptoMail](https://zeptomail.com)
-- **Hosting**: [Supabase](https://supabase.com) (Database)
+- **Hosting**: [Supabase](https://supabase.com) (Database) You can host anywhere with Postgres
 
-## 🚀 Quick Start
+### Quick Start
 
-### 1. Clone & Install
+**1. Clone & Install**
 
 \`\`\`bash
 git clone https://github.com/your-username/picturemeai-nextjs.git
 cd picturemeai-nextjs
 npm install
-\`\`\`
 
-### 2. Environment Setup
+````
 
-Copy the environment variables and configure with your API keys:
+**2. Environment Setup**
 
-\`\`\`bash
-cp .env .env.local
-\`\`\`
+Copy the environment template and configure with your API keys:
 
-Required environment variables:
+```bash
+cp .env.example .env.local
+````
 
-\`\`\`env
+Edit `.env.local` with your actual API keys and configuration values. See `.env.example` for all required variables.
 
-# AI Generation - Get your key from https://fal.ai
+**3. Database Setup**
 
-FAL_KEY=your_fal_api_key
-
-# Database - Supabase or any PostgreSQL database
-
-DATABASE_URL=your_postgresql_connection_string
-DIRECT_URL=your_direct_postgresql_connection_string
-
-# Authentication - Better Auth configuration
-
-BETTER_AUTH_SECRET=your_random_secret_key
-
-# CRITICAL: Use your production domain for production deployments
-
-NEXT_PUBLIC_APP_URL=http://localhost:3000 # Used by both client and server
-BETTER_AUTH_URL=http://localhost:3000 # Fallback server URL
-
-# Google OAuth (optional but recommended)
-
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# Stripe Payment Processing
-
-STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
-NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID=price_your_starter_price_id
-NEXT_PUBLIC_STRIPE_CREATOR_PRICE_ID=price_your_creator_price_id
-
-# Required Stripe Webhook Events (configure in Stripe Dashboard):
-
-# - checkout.session.completed
-
-# - payment_intent.succeeded
-
-# - payment_intent.payment_failed
-
-# Email Service - ZeptoMail configuration
-
-EMAIL_FROM=noreply@yourdomain.com
-EMAIL_FROM_NAME=YourAppName
-ZEPTOMAIL_API_URL=api.zeptomail.com/
-ZEPTO_MAIL_API_KEY=your_zeptomail_api_key
-\`\`\`
-
-### 3. Database Setup
-
-\`\`\`bash
-
-# Generate Prisma client
-
+```bash
 npx prisma generate
-
-# Run database migrations
-
 npx prisma db push
+```
 
-# (Optional) Seed the database
+**4. Run Development Server**
 
-npx prisma db seed
-\`\`\`
-
-### 4. Run Development Server
-
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📁 Project Structure
+### Project Structure
 
 \`\`\`
 ├── app/ # Next.js 15 App Router
@@ -192,33 +130,9 @@ To modify the number of free credits per user, update `FREE_CREDITS_PER_USER` in
 - Shows clear breakdown in the UI ("1 free" vs "20 paid")
 - Seamlessly transitions to paid credits when free credits are exhausted
 
-## 🔧 Configuration
+### Deployment
 
-All hardcoded values are centralized in `config/app-config.ts`:
-
-- **Credit costs and pricing**
-- **API endpoints**
-- **Default generation settings**
-- **Business information**
-- **UI constants**
-
-## 🎨 How It Works
-
-1. **Upload**: User uploads a reference photo
-2. **Configure**: Choose style (Auto/Realistic/Fiction) and format
-3. **Generate**: FAL.AI processes the image using Ideogram Character model
-4. **Record**: Backend tracks generation and deducts credits
-5. **Download**: User can view and download generated images
-
-### Architecture
-
-- **Frontend** → **FAL.AI**: Direct API calls for fast generation
-- **Frontend** → **Backend**: Credit management and generation tracking
-- **Backend** → **Database**: Secure record keeping and user management
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
+**Vercel (Recommended)**
 
 1. Connect your GitHub repository to Vercel
 2. Configure environment variables in Vercel dashboard
@@ -226,7 +140,7 @@ All hardcoded values are centralized in `config/app-config.ts`:
 
 > **Note**: The `postinstall` script automatically runs `prisma generate` during deployment to ensure the Prisma client is available.
 
-### Stripe Webhook Setup
+**Stripe Webhook Setup**
 
 **Important**: Configure webhooks in your Stripe Dashboard for payments to work:
 
@@ -246,16 +160,16 @@ All hardcoded values are centralized in `config/app-config.ts`:
 
 \`\`\`env
 
-# Authentication URLs - MUST match your production domain
+### Authentication URLs - MUST match your production domain
 
 NEXT_PUBLIC_APP_URL=https://yourdomain.com
 BETTER_AUTH_URL=https://yourdomain.com
 
-# Email configuration
+### Email configuration
 
 EMAIL_FROM=noreply@yourdomain.com
 
-# Generate new secrets for production
+### Generate new secrets for production
 
 BETTER_AUTH_SECRET=your_secure_production_secret
 \`\`\`
@@ -305,25 +219,11 @@ npm run format # Format code with Prettier
 - **TypeScript**: Strict type checking enabled
 - **Husky**: Pre-commit hooks (if configured)
 
-## 📄 License
+### License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (\`git checkout -b feature/AmazingFeature\`)
-3. Commit your changes (\`git commit -m 'Add some AmazingFeature'\`)
-4. Push to the branch (\`git push origin feature/AmazingFeature\`)
-5. Open a Pull Request
-
-## 🆘 Support
-
-- **Documentation**: Check this README and code comments
-- **Issues**: Create an issue on GitHub
-- **Email**: support@yourdomain.com
-
-## 🙏 Acknowledgments
+### Acknowledgments
 
 - **[FAL.AI](https://fal.ai)** - AI image generation platform
 - **[HeroUI](https://heroui.com)** - Beautiful React components

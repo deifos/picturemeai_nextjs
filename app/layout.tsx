@@ -7,6 +7,7 @@ import { siteConfig } from '@/config/site';
 import { fontSans } from '@/config/fonts';
 import { ConditionalNavbar } from '@/components/conditional-navbar';
 import { Footer } from '@/components/Footer';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 
 import { Providers } from './providers';
 
@@ -103,6 +104,8 @@ export default function RootLayout({
             <Footer />
           </div>
         </Providers>
+
+        <GoogleAnalytics gtag='G-742SLK7W01' />
 
         {/* Feedback Basket Widget built by vlad, if you clone this poject check out feedbackbasket.com :) */}
         <Script
