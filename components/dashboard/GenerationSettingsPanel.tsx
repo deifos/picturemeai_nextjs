@@ -8,20 +8,18 @@ import { Link } from '@heroui/link';
 import { Select, SelectItem } from '@heroui/select';
 import { Spinner } from '@heroui/spinner';
 
-import { type IdeogramStyle, type ImageSize } from '@/lib/fal-client';
+import { type ImageSize } from '@/lib/fal-client';
 import { ALL_CATEGORIES, type PromptCategory } from '@/lib/prompt-presets';
 import { RefreshIcon } from '@/components/icons';
 
 interface GenerationSettingsPanelProps {
   category: PromptCategory;
-  style: IdeogramStyle;
   imageSize: ImageSize;
   prompt: string;
   credits: number | null;
   canGenerate: boolean;
   isGenerating: boolean;
   onCategoryChange: (category: PromptCategory) => void;
-  onStyleChange: (style: IdeogramStyle) => void;
   onImageSizeChange: (size: ImageSize) => void;
   onPromptChange: (prompt: string) => void;
   onLoadRandomPrompt: () => void;
@@ -30,14 +28,12 @@ interface GenerationSettingsPanelProps {
 
 export function GenerationSettingsPanel({
   category,
-  style,
   imageSize,
   prompt,
   credits,
   canGenerate,
   isGenerating,
   onCategoryChange,
-  onStyleChange,
   onImageSizeChange,
   onPromptChange,
   onLoadRandomPrompt,
@@ -62,41 +58,6 @@ export function GenerationSettingsPanel({
             <SelectItem key={cat}>{cat}</SelectItem>
           ))}
         </Select>
-
-        <div className='flex flex-col gap-2'>
-          <label
-            className='text-sm font-medium text-foreground'
-            htmlFor='style-buttons'
-          >
-            Style
-          </label>
-          <div
-            aria-labelledby='style-label'
-            className='flex  gap-2 justify-center'
-            id='style-buttons'
-            role='group'
-          >
-            {(['AUTO', 'REALISTIC', 'FICTION'] as IdeogramStyle[]).map(
-              styleOption => (
-                <Button
-                  key={styleOption}
-                  aria-pressed={style === styleOption}
-                  className='min-w-[80px]'
-                  color={style === styleOption ? 'primary' : 'default'}
-                  size='sm'
-                  variant={style === styleOption ? 'solid' : 'bordered'}
-                  onPress={() => onStyleChange(styleOption)}
-                >
-                  {styleOption === 'AUTO'
-                    ? 'Auto'
-                    : styleOption === 'REALISTIC'
-                      ? 'Realistic'
-                      : 'Fiction'}
-                </Button>
-              )
-            )}
-          </div>
-        </div>
 
         <div className='flex flex-col gap-2'>
           <label

@@ -1,9 +1,9 @@
 'use client';
 
-import { useRef, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Card, CardBody, CardHeader } from '@heroui/card';
-import { Input } from '@heroui/input';
 import { Spinner } from '@heroui/spinner';
+import { useDropzone } from 'react-dropzone';
 
 import { uploadToFal } from '@/lib/fal-client';
 
@@ -20,22 +20,11 @@ export function ImageUploadSection({
   onReferenceChange,
   error,
 }: ImageUploadSectionProps) {
-  const fileRef = useRef<HTMLInputElement | null>(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
 
-  const handleFileChange = useCallback(
-    (evt: React.ChangeEvent<HTMLInputElement>) => {
-      const file = evt.target.files?.[0];
-
-      if (!file) {
-        onPreviewChange(null);
-        onReferenceChange(null);
-        setImageLoadError(false);
-
-        return;
-      }
-
+  const processFile = useCallback(
+    (file: File) => {
       // Validate file type
       if (!file.type.startsWith('image/')) {
         console.error('Invalid file type:', file.type);
@@ -89,50 +78,103 @@ export function ImageUploadSection({
     [onPreviewChange, onReferenceChange]
   );
 
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+
+      if (file) {
+        processFile(file);
+      }
+    },
+    [processFile]
+  );
+
+  const onDropRejected = useCallback(() => {
+    setImageLoadError(true);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive, isDragReject } =
+    useDropzone({
+      onDrop,
+      onDropRejected,
+      accept: {
+        'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
+      },
+      maxFiles: 1,
+      maxSize: 10 * 1024 * 1024, // 10MB
+    });
+
   return (
     <Card className='bg-content1/60 border border-default-100'>
       <CardHeader className='text-large font-semibold'>Upload</CardHeader>
       <CardBody className='flex flex-col gap-6'>
-        <Input
-          ref={fileRef as any}
-          accept='image/*'
-          aria-label='Upload your image'
-          type='file'
-          onChange={handleFileChange}
-        />
-
-        {(previewUrl || isImageLoading) && (
-          <div className='flex justify-center'>
-            <div className='relative w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border border-default-100 bg-content2/50'>
-              {isImageLoading ? (
-                <div className='flex items-center justify-center w-full h-full'>
-                  <Spinner size='lg' />
-                </div>
-              ) : imageLoadError ? (
-                <div className='flex flex-col items-center justify-center w-full h-full text-danger'>
-                  <p className='text-sm'>Failed to load image</p>
-                  <p className='text-xs'>Try a different image</p>
-                </div>
-              ) : previewUrl ? (
-                <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt='Preview'
-                    className='object-contain object-center w-full h-full'
-                    src={previewUrl}
-                    onError={() => {
-                      console.error('Image failed to load:', previewUrl);
-                      setImageLoadError(true);
-                    }}
-                    onLoad={() => {
-                      setImageLoadError(false);
-                    }}
-                  />
-                </>
-              ) : null}
+        <div
+          {...getRootProps()}
+          className={`
+            border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-200 relative overflow-hidden
+            ${previewUrl ? 'p-0' : 'p-8'}
+            ${
+              isDragActive
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-950'
+                : isDragReject || imageLoadError
+                  ? 'border-danger-500 bg-danger-50 dark:bg-danger-950'
+                  : previewUrl
+                    ? 'border-primary-300 hover:border-primary-500'
+                    : 'border-default-300 hover:border-primary-400 hover:bg-default-50'
+            }
+          `}
+        >
+          <input {...getInputProps()} />
+          {isImageLoading ? (
+            <div className='flex flex-col items-center gap-3 p-8'>
+              <Spinner size='lg' />
+              <p className='text-sm text-default-600'>Processing image...</p>
             </div>
-          </div>
-        )}
+          ) : isDragActive ? (
+            <div className='flex flex-col items-center gap-3 p-8'>
+              <div className='text-4xl'>📁</div>
+              <p className='text-lg font-medium text-primary'>
+                Drop image here
+              </p>
+              <p className='text-sm text-default-600'>Release to upload</p>
+            </div>
+          ) : previewUrl && !imageLoadError ? (
+            <div className='relative group'>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt='Preview'
+                className='w-full h-64 object-contain bg-content2/50'
+                src={previewUrl}
+                onError={() => {
+                  console.error('Image failed to load:', previewUrl);
+                  setImageLoadError(true);
+                }}
+                onLoad={() => {
+                  setImageLoadError(false);
+                }}
+              />
+              {/* Overlay that appears on hover */}
+              <div className='absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center'>
+                <div className='text-white text-center'>
+                  <div className='text-2xl mb-2'>📷</div>
+                  <p className='text-sm font-medium'>Click to change image</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className='flex flex-col items-center gap-3'>
+              <div className='text-4xl'>📷</div>
+              <p className='text-lg font-medium'>Upload your image</p>
+              <p className='text-sm text-default-600'>
+                Drag & drop an image here, or{' '}
+                <span className='text-primary underline'>click to browse</span>
+              </p>
+              <p className='text-xs text-default-500'>
+                Supports JPG, PNG, WebP (max 10MB)
+              </p>
+            </div>
+          )}
+        </div>
 
         {(error || imageLoadError) && (
           <Card className='border-danger-200 bg-danger-50'>

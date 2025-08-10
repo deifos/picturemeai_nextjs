@@ -3,11 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { Card } from '@heroui/card';
 
-import {
-  generateWithFal,
-  type IdeogramStyle,
-  type ImageSize,
-} from '@/lib/fal-client';
+import { generateWithFal, type ImageSize } from '@/lib/fal-client';
 import { PROMPT_LIBRARY, type PromptCategory } from '@/lib/prompt-presets';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { useSession } from '@/lib/auth-client';
@@ -28,9 +24,6 @@ export function DashboardClient() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [items, setItems] = useState<GeneratedItem[]>([]);
   const [category, setCategory] = useState<PromptCategory>('Professional');
-  const [style, setStyle] = useState<IdeogramStyle>(
-    CREDITS_CONFIG.DEFAULT_STYLE
-  );
   const [imageSize, setImageSize] = useState<ImageSize>(
     CREDITS_CONFIG.DEFAULT_IMAGE_SIZE
   );
@@ -107,6 +100,7 @@ export function DashboardClient() {
       setError(
         'Please upload an image first. A reference image is required for generation.'
       );
+
       return;
     }
 
@@ -134,7 +128,7 @@ export function DashboardClient() {
         prompt: promptToUse,
         numImages: 1, // Always generate single image
         imageSize: imageSize,
-        style: style,
+        style: 'REALISTIC',
         renderingSpeed: 'BALANCED',
         referenceImageUrl: referenceUrl, // Always required now
       });
@@ -165,7 +159,7 @@ export function DashboardClient() {
               numImages: CREDITS_CONFIG.DEFAULT_NUM_IMAGES,
               imageUrls: [result.images[0].url],
               imageSize: imageSize,
-              style: style,
+              style: 'REALISTIC',
               renderingSpeed: CREDITS_CONFIG.DEFAULT_RENDERING_SPEED,
               falRequestId: result.requestId,
             }),
@@ -224,13 +218,11 @@ export function DashboardClient() {
                         imageSize={imageSize}
                         isGenerating={isGenerating}
                         prompt={prompt}
-                        style={style}
                         onCategoryChange={setCategory}
                         onGenerate={handleGenerate}
                         onImageSizeChange={setImageSize}
                         onLoadRandomPrompt={loadRandomPrompt}
                         onPromptChange={setPrompt}
-                        onStyleChange={setStyle}
                       />
                     </div>
                   </Card>
