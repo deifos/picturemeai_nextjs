@@ -5,7 +5,7 @@ import { motion, Variants } from 'framer-motion';
 import { Link } from '@heroui/link';
 
 import { title } from '@/components/primitives';
-import { XIcon } from '@/components/icons';
+import { XIcon } from '@/components/icons/XIcon';
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 24 },
@@ -146,19 +146,16 @@ export function FAQ() {
               Still have questions?
             </h3>
             <p className='text-default-600 mb-4'>
-              Can&apos;t find what you&apos;re looking for? Reach out to me on X.
-            </p>
-            <div className='flex items-center justify-center'>
+              Can&apos;t find what you&apos;re looking for? Reach out to me on{' '}
               <Link
                 isExternal
-                showAnchorIcon
-                className='flex items-center gap-2 text-default-600 hover:text-primary transition-colors font-medium'
                 href='https://x.com/deifosv'
               >
-                <XIcon size={18} />
-                <span>Reach out to me on X</span>
+                {' '}
+                <XIcon className='w-4 h-4' />
               </Link>
-            </div>
+              {' '}or through the feedback bubble.
+            </p>
           </div>
         </motion.div>
       </div>

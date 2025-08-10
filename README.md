@@ -77,8 +77,11 @@ NEXT_PUBLIC_STRIPE_STARTER_PRICE_ID=price_your_starter_price_id
 NEXT_PUBLIC_STRIPE_CREATOR_PRICE_ID=price_your_creator_price_id
 
 # Required Stripe Webhook Events (configure in Stripe Dashboard):
+
 # - checkout.session.completed
-# - payment_intent.succeeded  
+
+# - payment_intent.succeeded
+
 # - payment_intent.payment_failed
 
 # Email Service - ZeptoMail configuration
