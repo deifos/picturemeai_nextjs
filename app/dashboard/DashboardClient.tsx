@@ -271,10 +271,18 @@ export function DashboardClient() {
                         </Select>
 
                         <div className='flex flex-col gap-2'>
-                          <label className='text-sm font-medium text-foreground'>
+                          <label
+                            className='text-sm font-medium text-foreground'
+                            htmlFor='style-buttons'
+                          >
                             Style
                           </label>
-                          <div className='flex flex-wrap gap-2 justify-center'>
+                          <div
+                            aria-labelledby='style-label'
+                            className='flex flex-wrap gap-2 justify-center'
+                            id='style-buttons'
+                            role='group'
+                          >
                             {(
                               [
                                 'AUTO',
@@ -284,6 +292,7 @@ export function DashboardClient() {
                             ).map(styleOption => (
                               <Button
                                 key={styleOption}
+                                aria-pressed={style === styleOption}
                                 className='min-w-[80px]'
                                 color={
                                   style === styleOption ? 'primary' : 'default'
@@ -305,10 +314,18 @@ export function DashboardClient() {
                         </div>
 
                         <div className='flex flex-col gap-2'>
-                          <label className='text-sm font-medium text-foreground'>
+                          <label
+                            className='text-sm font-medium text-foreground'
+                            htmlFor='image-size-buttons'
+                          >
                             Image Size
                           </label>
-                          <div className='flex flex-wrap gap-2 justify-center'>
+                          <div
+                            aria-labelledby='image-size-label'
+                            className='flex flex-wrap gap-2 justify-center'
+                            id='image-size-buttons'
+                            role='group'
+                          >
                             {(
                               [
                                 {
@@ -327,6 +344,7 @@ export function DashboardClient() {
                             ).map(sizeOption => (
                               <Button
                                 key={sizeOption.value}
+                                aria-pressed={imageSize === sizeOption.value}
                                 className='min-w-[80px]'
                                 color={
                                   imageSize === sizeOption.value

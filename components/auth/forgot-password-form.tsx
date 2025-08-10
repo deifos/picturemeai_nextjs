@@ -196,8 +196,11 @@ export function ForgotPasswordForm({
               {/* Email Form */}
               <form className='flex flex-col gap-4' onSubmit={onSubmit}>
                 <div className='flex flex-col gap-2'>
-                  <label className='text-sm'>Email</label>
+                  <label className='text-sm' htmlFor='email-input'>
+                    Email
+                  </label>
                   <Input
+                    id='email-input'
                     placeholder='m@example.com'
                     type='email'
                     value={email}

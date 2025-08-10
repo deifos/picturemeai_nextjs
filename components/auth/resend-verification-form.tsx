@@ -242,8 +242,11 @@ export function ResendVerificationForm({
                 />
 
                 <div className='flex flex-col gap-2'>
-                  <label className='text-sm'>Email</label>
+                  <label className='text-sm' htmlFor='email-input'>
+                    Email
+                  </label>
                   <Input
+                    id='email-input'
                     placeholder='Enter your email address'
                     type='email'
                     value={email}

@@ -253,8 +253,11 @@ export function ResetPasswordForm({
               {/* Password Reset Form */}
               <form className='flex flex-col gap-4' onSubmit={onSubmit}>
                 <div className='flex flex-col gap-2'>
-                  <label className='text-sm'>New Password</label>
+                  <label className='text-sm' htmlFor='new-password-input'>
+                    New Password
+                  </label>
                   <Input
+                    id='new-password-input'
                     placeholder='••••••••'
                     type='password'
                     value={password}
@@ -266,8 +269,11 @@ export function ResetPasswordForm({
                 </div>
 
                 <div className='flex flex-col gap-2'>
-                  <label className='text-sm'>Confirm Password</label>
+                  <label className='text-sm' htmlFor='confirm-password-input'>
+                    Confirm Password
+                  </label>
                   <Input
+                    id='confirm-password-input'
                     placeholder='••••••••'
                     type='password'
                     value={confirmPassword}

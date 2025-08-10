@@ -220,8 +220,11 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
               <form className='flex flex-col gap-4' onSubmit={onSubmit}>
                 <div className='grid grid-cols-2 gap-4'>
                   <div className='flex flex-col gap-2'>
-                    <label className='text-sm'>First name</label>
+                    <label className='text-sm' htmlFor='first-name-input'>
+                      First name
+                    </label>
                     <Input
+                      id='first-name-input'
                       placeholder='John'
                       type='text'
                       value={firstName}
@@ -229,8 +232,11 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
                     />
                   </div>
                   <div className='flex flex-col gap-2'>
-                    <label className='text-sm'>Last name</label>
+                    <label className='text-sm' htmlFor='last-name-input'>
+                      Last name
+                    </label>
                     <Input
+                      id='last-name-input'
                       placeholder='Doe'
                       type='text'
                       value={lastName}
@@ -240,8 +246,11 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
                 </div>
 
                 <div className='flex flex-col gap-2'>
-                  <label className='text-sm'>Email</label>
+                  <label className='text-sm' htmlFor='email-input'>
+                    Email
+                  </label>
                   <Input
+                    id='email-input'
                     placeholder='john@example.com'
                     type='email'
                     value={email}
@@ -250,8 +259,11 @@ export function AuthSignUpForm({ className, ...props }: AuthSignUpFormProps) {
                 </div>
 
                 <div className='flex flex-col gap-2'>
-                  <label className='text-sm'>Password</label>
+                  <label className='text-sm' htmlFor='password-input'>
+                    Password
+                  </label>
                   <Input
+                    id='password-input'
                     placeholder='••••••••'
                     type='password'
                     value={password}

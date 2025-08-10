@@ -167,8 +167,11 @@ export function AuthSignInForm({ className, ...props }: AuthSignInFormProps) {
 
               <form className='flex flex-col gap-4' onSubmit={onSubmit}>
                 <div className='flex flex-col gap-2'>
-                  <label className='text-sm'>Email</label>
+                  <label className='text-sm' htmlFor='email-input'>
+                    Email
+                  </label>
                   <Input
+                    id='email-input'
                     placeholder='m@example.com'
                     type='email'
                     value={email}
@@ -177,7 +180,9 @@ export function AuthSignInForm({ className, ...props }: AuthSignInFormProps) {
                 </div>
                 <div className='flex flex-col gap-2'>
                   <div className='flex justify-between items-center'>
-                    <label className='text-sm'>Password</label>
+                    <label className='text-sm' htmlFor='password-input'>
+                      Password
+                    </label>
                     <Link
                       className='text-xs text-primary'
                       href='/auth/forgot-password'
@@ -186,6 +191,7 @@ export function AuthSignInForm({ className, ...props }: AuthSignInFormProps) {
                     </Link>
                   </div>
                   <Input
+                    id='password-input'
                     placeholder='••••••••'
                     type='password'
                     value={password}
