@@ -15,13 +15,14 @@ import { useCreditsStore } from '@/lib/credits-store';
 import { ImageUploadSection } from '@/components/dashboard/ImageUploadSection';
 import { GenerationSettingsPanel } from '@/components/dashboard/GenerationSettingsPanel';
 import { GeneratedGallery } from '@/components/dashboard/GeneratedGallery';
+import { FirstTimeUserModal } from '@/components/first-time-user-modal';
 import { API_CONFIG, CREDITS_CONFIG } from '@/config/app-config';
 
 type GeneratedItem = { id: string; url: string };
 
 export function DashboardClient() {
   const { data: session } = useSession();
-  const { credits, decrementCredits } = useCreditsStore();
+  const { creditInfo, fetchCredits } = useCreditsStore();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [referenceUrl, setReferenceUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -39,13 +40,14 @@ export function DashboardClient() {
   const [isLoadingExisting, setIsLoadingExisting] = useState(true);
 
   const canGenerate = useMemo(() => {
-    return !!previewUrl && credits !== null && credits > 0;
-  }, [previewUrl, credits]);
+    return !!previewUrl && creditInfo !== null && creditInfo.total > 0;
+  }, [previewUrl, creditInfo]);
 
-  // Load existing generations on component mount
+  // Load existing generations and credits on component mount
   useEffect(() => {
     if (session?.user.id) {
       loadExistingGenerations();
+      fetchCredits();
     }
   }, [session?.user.id]);
 
@@ -96,7 +98,7 @@ export function DashboardClient() {
     if (!canGenerate) return;
 
     // Double-check credits before starting
-    if (credits === null || credits <= 0) {
+    if (creditInfo === null || creditInfo.total <= 0) {
       setError(
         'Insufficient credits. Please purchase more credits to continue generating images.'
       );
@@ -157,8 +159,8 @@ export function DashboardClient() {
           });
 
           if (response.ok) {
-            // Decrement credits in store
-            decrementCredits(CREDITS_CONFIG.COST_PER_GENERATION);
+            // Refresh credits from server to get accurate breakdown
+            await fetchCredits();
           } else if (response.status === 402) {
             throw new Error(
               'Insufficient credits. Please purchase more credits to continue generating images.'
@@ -187,6 +189,7 @@ export function DashboardClient() {
 
   return (
     <ErrorBoundary>
+      {session?.user.id && <FirstTimeUserModal userId={session.user.id} />}
       <section className='w-full min-h-screen'>
         <div className='w-full px-6 py-8'>
           <div className='container mx-auto max-w-7xl'>
@@ -204,7 +207,7 @@ export function DashboardClient() {
                       <GenerationSettingsPanel
                         canGenerate={canGenerate}
                         category={category}
-                        credits={credits}
+                        credits={creditInfo?.total ?? null}
                         imageSize={imageSize}
                         isGenerating={isGenerating}
                         prompt={prompt}

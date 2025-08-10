@@ -72,7 +72,7 @@ export function GenerationSettingsPanel({
           </label>
           <div
             aria-labelledby='style-label'
-            className='flex flex-wrap gap-2 justify-center'
+            className='flex  gap-2 justify-center'
             id='style-buttons'
             role='group'
           >
@@ -107,7 +107,7 @@ export function GenerationSettingsPanel({
           </label>
           <div
             aria-labelledby='image-size-label'
-            className='flex flex-wrap gap-2 justify-center'
+            className='flex  gap-2 justify-center'
             id='image-size-buttons'
             role='group'
           >

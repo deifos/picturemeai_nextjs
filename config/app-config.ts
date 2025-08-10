@@ -10,6 +10,9 @@ export const CREDITS_CONFIG = {
   // Cost per image generation
   COST_PER_GENERATION: 1,
 
+  // Free credits for new users
+  FREE_CREDITS_PER_USER: 1,
+
   // Default generation settings
   DEFAULT_NUM_IMAGES: 1,
   DEFAULT_IMAGE_SIZE: 'square_hd' as const,

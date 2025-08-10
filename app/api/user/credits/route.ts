@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
-import { getUserCredits } from '@/lib/credits';
+import { getTotalAvailableCredits } from '@/lib/credits';
 
 export async function GET() {
   try {
@@ -12,9 +12,13 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const credits = await getUserCredits(session.user.id);
+    const creditInfo = await getTotalAvailableCredits(session.user.id);
 
-    return NextResponse.json({ credits });
+    return NextResponse.json({
+      paidCredits: creditInfo.paidCredits,
+      freeCredits: creditInfo.freeCredits,
+      total: creditInfo.total,
+    });
   } catch (error) {
     console.error('Error fetching user credits:', error);
 

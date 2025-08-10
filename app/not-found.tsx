@@ -1,22 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
 import { Button } from '@heroui/button';
 import { Card, CardBody } from '@heroui/card';
+import { Link } from '@heroui/link';
 import { motion } from 'framer-motion';
 
-export default function Error({
-  error,
-  reset,
-}: {
-  error: Error;
-  reset: () => void;
-}) {
-  useEffect(() => {
-    // Log the error to an error reporting service
-    console.error(error);
-  }, [error]);
-
+export default function NotFound() {
   return (
     <div className='min-h-screen bg-gradient-to-br from-background to-default-50 flex items-center justify-center p-4'>
       <motion.div
@@ -25,7 +14,7 @@ export default function Error({
         initial={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className='bg-content1/80 backdrop-blur-sm border border-danger/20 shadow-xl'>
+        <Card className='bg-content1/80 backdrop-blur-sm border border-default-200 shadow-xl'>
           <CardBody className='p-8 text-center'>
             <motion.div
               animate={{ scale: 1 }}
@@ -33,69 +22,64 @@ export default function Error({
               initial={{ scale: 0 }}
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
             >
-              ⚠️
+              🔍
             </motion.div>
 
-            <motion.h2
+            <motion.h1
               animate={{ opacity: 1 }}
-              className='text-2xl font-bold text-foreground mb-2'
+              className='text-3xl font-bold text-foreground mb-2'
               initial={{ opacity: 0 }}
               transition={{ delay: 0.3 }}
             >
-              Something went wrong!
+              404
+            </motion.h1>
+
+            <motion.h2
+              animate={{ opacity: 1 }}
+              className='text-xl font-semibold text-default-700 mb-2'
+              initial={{ opacity: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              Page Not Found
             </motion.h2>
 
             <motion.p
               animate={{ opacity: 1 }}
               className='text-default-600 mb-6 text-sm leading-relaxed'
               initial={{ opacity: 0 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.5 }}
             >
-              We encountered an unexpected error. This might be due to a
-              configuration issue or temporary problem.
+              The page you&apos;re looking for doesn&apos;t exist or has been
+              moved.
             </motion.p>
 
             <motion.div
               animate={{ opacity: 1 }}
               className='space-y-3'
               initial={{ opacity: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.6 }}
             >
               <Button
+                as={Link}
                 className='w-full'
                 color='primary'
+                href='/'
                 size='lg'
-                onPress={() => reset()}
-              >
-                Try Again
-              </Button>
-
-              <Button
-                className='w-full'
-                color='default'
-                size='sm'
-                variant='light'
-                onPress={() => (window.location.href = '/')}
               >
                 Go to Homepage
               </Button>
-            </motion.div>
 
-            {process.env.NODE_ENV === 'development' && (
-              <motion.details
-                animate={{ opacity: 1 }}
-                className='mt-6 text-left'
-                initial={{ opacity: 0 }}
-                transition={{ delay: 0.6 }}
+              <Button
+                as={Link}
+                className='w-full'
+                color='default'
+                href='/dashboard'
+                size='sm'
+                variant='light'
               >
-                <summary className='text-xs text-default-500 cursor-pointer hover:text-default-700 transition-colors'>
-                  Error Details (Development)
-                </summary>
-                <pre className='mt-2 p-3 bg-default-100 rounded-lg text-xs text-danger overflow-auto max-h-32'>
-                  {error.message}
-                </pre>
-              </motion.details>
-            )}
+                Go to Dashboard
+              </Button>
+            </motion.div>
           </CardBody>
         </Card>
       </motion.div>

@@ -38,9 +38,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Check and deduct credits (1 credit per generation)
-    const creditsDeducted = await deductCredits(session.user.id, 1);
+    const creditResult = await deductCredits(session.user.id, 1);
 
-    if (!creditsDeducted) {
+    if (!creditResult.success) {
       return NextResponse.json(
         { error: 'Insufficient credits' },
         { status: 402 }
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       renderingSpeed,
       falRequestId,
       creditsUsed: 1,
+      usedFreeCredit: creditResult.usedFreeCredit,
     });
 
     return NextResponse.json({

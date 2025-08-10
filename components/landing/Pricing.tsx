@@ -2,6 +2,7 @@
 
 import { Card, CardBody, CardHeader } from '@heroui/card';
 import { Button } from '@heroui/button';
+import { Link } from '@heroui/link';
 import { motion, Variants } from 'framer-motion';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -91,7 +92,74 @@ export function Pricing() {
         >
           Pay once. Keep everything you generate.
         </motion.p>
-        <div className='grid gap-6 md:grid-cols-2 mt-8 max-w-4xl mx-auto'>
+        <div className='grid gap-6 md:grid-cols-3 mt-8 max-w-6xl mx-auto'>
+          {/* Free Tier */}
+          <motion.div
+            initial='hidden'
+            variants={fadeUp}
+            viewport={{ once: true }}
+            whileInView='visible'
+          >
+            <Card className='bg-content1/60 border border-success/40 h-full'>
+              <CardHeader className='pb-4'>
+                <div className='w-full'>
+                  <div className='flex items-center justify-between mb-2'>
+                    <div className='text-xl font-semibold'>Free Trial</div>
+                    <div className='text-3xl font-bold text-success'>$0</div>
+                  </div>
+                  <p className='text-default-500 text-sm'>Try before you buy</p>
+                </div>
+              </CardHeader>
+              <CardBody className='pt-0 flex flex-col h-full'>
+                <div className='flex-1 space-y-6'>
+                  <div>
+                    <h4 className='font-medium mb-3'>What&apos;s included:</h4>
+                    <ul className='space-y-2 text-sm'>
+                      <li className='flex items-center gap-2'>
+                        <span className='text-success'>✓</span>
+                        <span className='font-medium'>
+                          {CREDITS_CONFIG.FREE_CREDITS_PER_USER} high-quality
+                          image
+                        </span>
+                      </li>
+                      <li className='flex items-center gap-2'>
+                        <span className='text-success'>✓</span>
+                        <span>All style categories</span>
+                      </li>
+                      <li className='flex items-center gap-2'>
+                        <span className='text-success'>✓</span>
+                        <span>No watermarks</span>
+                      </li>
+                      <li className='flex items-center gap-2'>
+                        <span className='text-success'>✓</span>
+                        <span>Instant download</span>
+                      </li>
+                      <li className='flex items-center gap-2'>
+                        <span className='text-default-400'>✗</span>
+                        <span className='text-default-400'>Commercial use</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div className='pt-6'>
+                  <div className='text-xs text-default-500 mb-4'>
+                    No credit card required
+                  </div>
+                  <Button
+                    as={Link}
+                    className='w-full'
+                    color='success'
+                    href='/dashboard'
+                    size='lg'
+                    variant='flat'
+                  >
+                    Try for Free
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          </motion.div>
+          {/* Starter Tier */}
           <motion.div
             initial='hidden'
             variants={fadeUp}
@@ -112,8 +180,8 @@ export function Pricing() {
                   </p>
                 </div>
               </CardHeader>
-              <CardBody className='pt-0'>
-                <div className='space-y-6'>
+              <CardBody className='pt-0 flex flex-col h-full justify-between'>
+                <div className='flex-1 space-y-6'>
                   <div>
                     <h4 className='font-medium mb-3'>What&apos;s included:</h4>
                     <ul className='space-y-2 text-sm'>
@@ -146,23 +214,22 @@ export function Pricing() {
                       </li>
                     </ul>
                   </div>
-                  <div className='pt-2'>
-                    <div className='text-xs text-default-500 mb-4'>
-                      $
-                      {CREDITS_CONFIG.PACKAGES.STARTER.pricePerImage.toFixed(2)}{' '}
-                      per image • One-time payment
-                    </div>
-                    <Button
-                      className='w-full'
-                      color='primary'
-                      isLoading={loadingPlan === 'STARTER'}
-                      size='lg'
-                      variant='flat'
-                      onPress={() => handlePurchase('STARTER')}
-                    >
-                      Choose Starter
-                    </Button>
+                </div>
+                <div className='pt-6'>
+                  <div className='text-xs text-default-500 mb-4'>
+                    ${CREDITS_CONFIG.PACKAGES.STARTER.pricePerImage.toFixed(2)}{' '}
+                    per image • One-time payment
                   </div>
+                  <Button
+                    className='w-full'
+                    color='primary'
+                    isLoading={loadingPlan === 'STARTER'}
+                    size='lg'
+                    variant='flat'
+                    onPress={() => handlePurchase('STARTER')}
+                  >
+                    Choose Starter
+                  </Button>
                 </div>
               </CardBody>
             </Card>
@@ -193,8 +260,8 @@ export function Pricing() {
                   </p>
                 </div>
               </CardHeader>
-              <CardBody className='pt-0'>
-                <div className='space-y-6'>
+              <CardBody className='pt-0 flex flex-col h-full'>
+                <div className='flex-1 space-y-6'>
                   <div>
                     <h4 className='font-medium mb-3'>
                       Everything in Starter, plus:
@@ -231,23 +298,22 @@ export function Pricing() {
                       </li>
                     </ul>
                   </div>
-                  <div className='pt-2'>
-                    <div className='text-xs text-default-500 mb-4'>
-                      $
-                      {CREDITS_CONFIG.PACKAGES.CREATOR.pricePerImage.toFixed(2)}{' '}
-                      per image • One-time payment
-                    </div>
-                    <Button
-                      className='w-full'
-                      color='primary'
-                      isLoading={loadingPlan === 'CREATOR'}
-                      size='lg'
-                      variant='shadow'
-                      onPress={() => handlePurchase('CREATOR')}
-                    >
-                      Choose Creator
-                    </Button>
+                </div>
+                <div className='pt-6'>
+                  <div className='text-xs text-default-500 mb-4'>
+                    ${CREDITS_CONFIG.PACKAGES.CREATOR.pricePerImage.toFixed(2)}{' '}
+                    per image • One-time payment
                   </div>
+                  <Button
+                    className='w-full'
+                    color='primary'
+                    isLoading={loadingPlan === 'CREATOR'}
+                    size='lg'
+                    variant='shadow'
+                    onPress={() => handlePurchase('CREATOR')}
+                  >
+                    Choose Creator
+                  </Button>
                 </div>
               </CardBody>
             </Card>

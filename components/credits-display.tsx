@@ -16,19 +16,19 @@ export function CreditsDisplay({
   userId,
   compact = false,
 }: CreditsDisplayProps) {
-  const { credits, fetchCredits } = useCreditsStore();
+  const { creditInfo, fetchCredits } = useCreditsStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadCredits = async () => {
-      if (credits === null) {
+      if (creditInfo === null) {
         await fetchCredits();
       }
       setLoading(false);
     };
 
     loadCredits();
-  }, [userId, credits, fetchCredits]);
+  }, [userId, creditInfo, fetchCredits]);
 
   if (loading) {
     return compact ? (
@@ -52,10 +52,24 @@ export function CreditsDisplay({
     return (
       <div className='flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-200 rounded-full'>
         <span className='text-xs text-default-600'>Credits:</span>
-        <span className='text-sm font-bold text-primary'>
-          {credits !== null ? credits : '0'}
-        </span>
-        {(credits === null || credits === 0) && (
+        <div className='flex items-center gap-1'>
+          {creditInfo ? (
+            <>
+              {creditInfo.freeCredits > 0 ? (
+                <span className='text-xs text-success font-medium'>
+                  {creditInfo.freeCredits} free + {creditInfo.paidCredits}
+                </span>
+              ) : (
+                <span className='text-sm font-bold text-primary'>
+                  {creditInfo.total}
+                </span>
+              )}
+            </>
+          ) : (
+            <span className='text-sm font-bold text-primary'>0</span>
+          )}
+        </div>
+        {(creditInfo === null || creditInfo?.total === 0) && (
           <Button
             as={Link}
             className='ml-2 h-6 px-2 text-xs'
@@ -74,12 +88,12 @@ export function CreditsDisplay({
   return (
     <Card className='w-full bg-gradient-to-r from-primary-50 to-secondary-50 border border-primary-200'>
       <CardBody className='text-center'>
-        {credits === null || credits === 0 ? (
+        {creditInfo === null || creditInfo?.total === 0 ? (
           <div className='flex items-center justify-between'>
             <div className='text-left'>
               <p className='text-sm text-default-600'>Available Credits</p>
               <p className='text-2xl font-bold text-primary'>
-                {credits !== null ? credits : '0'}
+                {creditInfo?.total ?? '0'}
               </p>
             </div>
             <Button
@@ -95,7 +109,18 @@ export function CreditsDisplay({
         ) : (
           <div className='text-center'>
             <p className='text-sm text-default-600'>Available Credits</p>
-            <p className='text-3xl font-bold text-primary mb-2'>{credits}</p>
+            <p className='text-3xl font-bold text-primary mb-2'>
+              {creditInfo?.total ?? 0}
+            </p>
+            {creditInfo && creditInfo.freeCredits > 0 && (
+              <div className='flex justify-center items-center gap-3 mb-2'>
+                <div className='text-center'>
+                  <p className='text-xs text-success font-medium'>
+                    {creditInfo.freeCredits} free credits remaining
+                  </p>
+                </div>
+              </div>
+            )}
             <p className='text-xs text-default-500'>
               Each generation uses 1 credit
             </p>

@@ -60,6 +60,17 @@ export function Hero() {
               Upload a single photo and get a consistent gallery of you across
               styles, outfits, and settings in seconds.
             </motion.p>
+            <motion.div
+              className='flex items-center gap-2 mt-1'
+              variants={fadeUp}
+            >
+              <span className='text-success text-sm font-medium'>
+                ✨ 1 free image generation
+              </span>
+              <span className='text-default-500 text-sm'>
+                • No credit card required
+              </span>
+            </motion.div>
             <motion.div className='flex flex-wrap gap-3' variants={fadeUp}>
               <Button
                 as={Link}
@@ -68,7 +79,7 @@ export function Hero() {
                 radius='full'
                 size='lg'
               >
-                Get started
+                Try for Free
               </Button>
               <Button
                 as={Link}

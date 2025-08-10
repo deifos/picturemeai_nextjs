@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: `%s - ${siteConfig.name}`,
   },
   description: siteConfig.description,
-  
+
   authors: [{ name: 'PictureMe AI' }],
   creator: 'PictureMe AI',
   publisher: 'PictureMe AI',

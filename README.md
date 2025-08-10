@@ -5,6 +5,7 @@
 ## ✨ Features
 
 - 🖼️ **AI Image Generation** - Transform personal photos into professional headshots using [FAL.AI](https://fal.ai)
+- 🆓 **Free Trial** - New users get 1 free image generation (no credit card required)
 - 💳 **Credit-Based System** - Pay-per-use model with two convenient packages
 - 🎨 **Multiple Styles** - Choose from Auto, Realistic, or Fiction styles
 - 📐 **Various Formats** - Portrait, Square, and Landscape orientations
@@ -143,34 +144,54 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 │ ├── fal-client.ts # FAL.AI integration
 │ └── stripe.ts # Payment configuration
 └── prisma/ # Database schema and migrations
-\`\`\`
+
+````
 
 ## 💰 Pricing Configuration
 
-The app uses a credit-based system configured in \`config/app-config.ts\`:
+The app uses a credit-based system with a free trial for new users, configured in `config/app-config.ts`:
 
-\`\`\`typescript
-PACKAGES: {
-STARTER: {
-credits: 20,
-price: 1200, // $12.00 in cents
-pricePerImage: 0.60,
-},
-CREATOR: {
-credits: 40,
-price: 2000, // $20.00 in cents
-pricePerImage: 0.50,
-},
+```typescript
+CREDITS_CONFIG: {
+  // Free trial for new users
+  FREE_CREDITS_PER_USER: 1,
+
+  // Paid packages
+  PACKAGES: {
+    STARTER: {
+      credits: 20,
+      price: 1200, // $12.00 in cents
+      pricePerImage: 0.60,
+    },
+    CREATOR: {
+      credits: 40,
+      price: 2000, // $20.00 in cents
+      pricePerImage: 0.50,
+    },
+  }
 }
-\`\`\`
+````
 
-- Each image generation costs **1 credit**
-- Credits never expire
-- One-time payment (no subscriptions)
+### Credit System
+
+- **Free Trial**: New users get **1 free image generation** (no credit card required)
+- **Credit Cost**: Each image generation costs **1 credit**
+- **Credit Priority**: Free credits are used first, then paid credits
+- **Expiration**: Credits never expire
+- **Payment Model**: One-time payment (no subscriptions)
+
+### Free Credit Configuration
+
+To modify the number of free credits per user, update `FREE_CREDITS_PER_USER` in `config/app-config.ts`. The system automatically:
+
+- Tracks free credit usage in the database (`freeCreditsUsed` field)
+- Prioritizes free credits over paid credits during generation
+- Shows clear breakdown in the UI ("1 free" vs "20 paid")
+- Seamlessly transitions to paid credits when free credits are exhausted
 
 ## 🔧 Configuration
 
-All hardcoded values are centralized in \`config/app-config.ts\`:
+All hardcoded values are centralized in `config/app-config.ts`:
 
 - **Credit costs and pricing**
 - **API endpoints**

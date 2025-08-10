@@ -35,6 +35,9 @@ model User {
   
   // Current credits (sum of all active purchases)
   availableCredits Int       @default(0)
+  
+  // Free credits tracking
+  freeCreditsUsed  Int       @default(0)
 
   @@unique([email])
   @@map("user")
@@ -133,6 +136,7 @@ model Generation {
   
   // Tracking
   creditsUsed Int      @default(1) // Usually 1 credit per generation
+  usedFreeCredit Boolean @default(false) // Whether this generation used a free credit
   falRequestId String? // FAL request ID for tracking
   
   createdAt   DateTime @default(now())
