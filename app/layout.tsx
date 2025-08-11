@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     images: [
       {
-        url: '/og-image.png',
+        url: 'https://deifos.github.io/images/picturemeai-banner.jpg',
         width: 1200,
         height: 630,
         alt: 'PictureMe AI - Generate professional photos from a single upload',
@@ -50,8 +50,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteConfig.name,
     description: siteConfig.description,
-    images: ['/og-image.png'],
-    creator: '@picturemeai',
+    images: ['https://deifos.github.io/images/picturemeai-banner.jpg'],
+    creator: '@deifos',
   },
   robots: {
     index: true,
@@ -90,7 +90,9 @@ export default function RootLayout({
 }) {
   return (
     <html suppressHydrationWarning lang='en'>
-      <head />
+      <head>
+        <meta content='Picturemeai' name='apple-mobile-web-app-title' />
+      </head>
       <body
         className={clsx(
           'min-h-screen text-foreground bg-background font-sans antialiased',
