@@ -19,6 +19,7 @@ import { ThemeSwitch } from '@/components/theme-switch';
 import { UserMenu } from '@/components/user-menu';
 import { SmoothScrollLink } from '@/components/smooth-scroll-link';
 import { Logo } from '@/components/icons';
+import { GitHubStarButton } from '@/components/github-star-button';
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,7 +61,8 @@ export const Navbar = () => {
         className='hidden sm:flex basis-1/5 sm:basis-full'
         justify='end'
       >
-        <NavbarItem className='flex gap-2'>
+        <NavbarItem className='flex gap-3'>
+          <GitHubStarButton />
           <ThemeSwitch />
           <UserMenu onNavigate={() => setIsMenuOpen(false)} />
         </NavbarItem>
@@ -74,6 +76,11 @@ export const Navbar = () => {
 
       <NavbarMenu>
         <div className='mx-4 mt-2 flex flex-col gap-2'>
+          <NavbarMenuItem>
+            <div className='w-full flex justify-center py-2'>
+              <GitHubStarButton />
+            </div>
+          </NavbarMenuItem>
           {siteConfig.navMenuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <SmoothScrollLink
