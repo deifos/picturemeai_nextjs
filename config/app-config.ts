@@ -15,9 +15,7 @@ export const CREDITS_CONFIG = {
 
   // Default generation settings
   DEFAULT_NUM_IMAGES: 1,
-  DEFAULT_IMAGE_SIZE: 'square_hd' as const,
-  DEFAULT_STYLE: 'AUTO' as const,
-  DEFAULT_RENDERING_SPEED: 'BALANCED' as const,
+  DEFAULT_IMAGE_SIZE: 'portrait_16_9' as const,
 
   // Credit packages (prices in cents)
   PACKAGES: {

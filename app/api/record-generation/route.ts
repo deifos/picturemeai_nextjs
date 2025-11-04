@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 
 import { auth } from '@/lib/auth';
-import { deductCredits, recordGeneration } from '@/lib/credits';
+import { recordGeneration } from '@/lib/credits';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,17 +37,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check and deduct credits (1 credit per generation)
-    const creditResult = await deductCredits(session.user.id, 1);
+    // Credits are already deducted in the FAL proxy before generation
+    // This endpoint just records the generation metadata for history tracking
 
-    if (!creditResult.success) {
-      return NextResponse.json(
-        { error: 'Insufficient credits' },
-        { status: 402 }
-      );
-    }
-
-    // Record the generation
+    // Record the generation (creditsUsed is tracked, but not deducted here)
     const generation = await recordGeneration({
       userId: session.user.id,
       prompt,
@@ -59,7 +52,7 @@ export async function POST(request: NextRequest) {
       renderingSpeed,
       falRequestId,
       creditsUsed: 1,
-      usedFreeCredit: creditResult.usedFreeCredit,
+      usedFreeCredit: false, // This info is already tracked in the proxy deduction
     });
 
     return NextResponse.json({

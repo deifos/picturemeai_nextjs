@@ -1,13 +1,17 @@
-export type IdeogramStyle = 'AUTO' | 'REALISTIC' | 'FICTION';
-export type ImageSize = 'square_hd' | 'portrait_16_9' | 'landscape_16_9';
+export type ImageSize = 'portrait_16_9' | 'landscape_16_9' | 'square_hd';
+export type AspectRatio = '9:16' | '16:9' | '4:3' | '1:1';
+
+// Map our ImageSize to nano-banana aspect ratios
+const imageSizeToAspectRatio: Record<ImageSize, AspectRatio> = {
+  portrait_16_9: '9:16',
+  landscape_16_9: '16:9',
+  square_hd: '4:3',
+};
 
 export type FalGenerationParams = {
   prompt: string;
-  numImages: number; // 1-4
   referenceImageUrl?: string;
   imageSize?: ImageSize;
-  style?: IdeogramStyle;
-  renderingSpeed?: 'BALANCED' | 'QUALITY' | 'TURBO';
 };
 
 export type FalGenerationResult = {
@@ -31,24 +35,18 @@ export async function generateWithFal(
   params: FalGenerationParams,
   onProgress?: (log: string) => void
 ): Promise<FalGenerationResult> {
-  const {
-    prompt,
-    numImages,
-    referenceImageUrl,
-    imageSize = 'square_hd',
-    style = 'AUTO',
-    renderingSpeed = 'BALANCED',
-  } = params;
+  const { prompt, referenceImageUrl, imageSize = 'portrait_16_9' } = params;
 
-  const result = await fal.subscribe('fal-ai/ideogram/character', {
+  // Map imageSize to aspect_ratio for nano-banana
+  const aspectRatio = imageSizeToAspectRatio[imageSize];
+
+  const result = await fal.subscribe('fal-ai/nano-banana/edit', {
     input: {
-      rendering_speed: renderingSpeed,
-      style,
-      expand_prompt: true,
-      num_images: Math.max(1, Math.min(4, numImages)),
       prompt,
-      image_size: imageSize,
-      reference_image_urls: referenceImageUrl ? [referenceImageUrl] : [],
+      image_urls: referenceImageUrl ? [referenceImageUrl] : [],
+      num_images: 1,
+      output_format: 'jpeg',
+      aspect_ratio: aspectRatio,
     },
     logs: Boolean(onProgress),
     onQueueUpdate: update => {

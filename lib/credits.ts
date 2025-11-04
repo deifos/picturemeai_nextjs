@@ -47,6 +47,28 @@ export async function getTotalAvailableCredits(userId: string): Promise<{
   };
 }
 
+export async function addCredits(
+  userId: string,
+  creditsToAdd: number = 1
+): Promise<{ success: boolean }> {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        availableCredits: {
+          increment: creditsToAdd,
+        },
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error adding credits:', error);
+
+    return { success: false };
+  }
+}
+
 export async function deductCredits(
   userId: string,
   creditsToDeduct: number = 1

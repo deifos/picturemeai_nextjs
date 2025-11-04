@@ -124,12 +124,11 @@ export function DashboardClient() {
     try {
       const promptToUse = prompt.trim() || 'professional headshot';
 
+      // Credits are now checked and deducted in the FAL proxy
+      // This will throw an error if insufficient credits
       const result = await generateWithFal({
         prompt: promptToUse,
-        numImages: 1, // Always generate single image
         imageSize: imageSize,
-        style: 'REALISTIC',
-        renderingSpeed: 'BALANCED',
         referenceImageUrl: referenceUrl, // Always required now
       });
 
@@ -146,7 +145,8 @@ export function DashboardClient() {
         setItems(prev => [newItem, ...prev]); // Add to beginning for newest first
         setLoadingSpinners([]); // Clear loading spinners
 
-        // Record the generation in the database
+        // Record the generation metadata in the database for history tracking
+        // Credits were already deducted in the proxy, so this just saves the record
         try {
           const response = await fetch(API_CONFIG.ENDPOINTS.RECORD_GENERATION, {
             method: 'POST',
@@ -159,8 +159,8 @@ export function DashboardClient() {
               numImages: CREDITS_CONFIG.DEFAULT_NUM_IMAGES,
               imageUrls: [result.images[0].url],
               imageSize: imageSize,
-              style: 'REALISTIC',
-              renderingSpeed: CREDITS_CONFIG.DEFAULT_RENDERING_SPEED,
+              style: 'N/A', // No longer used with Seedream v4
+              renderingSpeed: 'N/A', // No longer used with Seedream v4
               falRequestId: result.requestId,
             }),
           });
@@ -168,26 +168,35 @@ export function DashboardClient() {
           if (response.ok) {
             // Refresh credits from server to get accurate breakdown
             await fetchCredits();
-          } else if (response.status === 402) {
-            throw new Error(
-              'Insufficient credits. Please purchase more credits to continue generating images.'
-            );
           }
         } catch (dbError) {
-          console.error('Error recording generation:', dbError);
-          // Don't throw here as the generation was successful, just the recording failed
+          console.error('Error recording generation metadata:', dbError);
+          // Don't throw here - the generation was successful and credits were deducted
+          // Refresh credits anyway to show the deduction
+          await fetchCredits();
         }
       } else {
         throw new Error('Invalid response from FAL API');
       }
     } catch (err) {
       console.error('Generation error:', err);
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : 'Failed to generate images. Please try again.';
 
-      setError(errorMessage);
+      // Handle insufficient credits error from the proxy
+      if (err instanceof Error && err.message.includes('402')) {
+        setError(
+          'Insufficient credits. Please purchase more credits to continue.'
+        );
+      } else {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : 'Failed to generate images. Please try again.';
+
+        setError(errorMessage);
+      }
+
+      // Refresh credits in case they were deducted before an error
+      await fetchCredits();
     } finally {
       setIsGenerating(false);
       setLoadingSpinners([]); // Clear loading spinners on error too
