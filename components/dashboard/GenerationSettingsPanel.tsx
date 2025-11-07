@@ -2,6 +2,7 @@
 
 import type { Selection } from '@react-types/shared';
 
+import { memo, useState, useEffect } from 'react';
 import { Textarea } from '@heroui/input';
 import { Button } from '@heroui/button';
 import { Link } from '@heroui/link';
@@ -26,7 +27,7 @@ interface GenerationSettingsPanelProps {
   onGenerate: () => void;
 }
 
-export function GenerationSettingsPanel({
+export const GenerationSettingsPanel = memo(function GenerationSettingsPanel({
   category,
   imageSize,
   prompt,
@@ -40,6 +41,25 @@ export function GenerationSettingsPanel({
   onGenerate,
 }: GenerationSettingsPanelProps) {
   const showCreditsWarning = credits !== null && credits <= 0;
+
+  // Local state for instant typing feedback
+  const [localPrompt, setLocalPrompt] = useState(prompt);
+
+  // Sync local state when prop changes (e.g., category change or random prompt)
+  useEffect(() => {
+    setLocalPrompt(prompt);
+  }, [prompt]);
+
+  // Sync to parent only when user is done editing (onBlur)
+  const handleBlur = () => {
+    onPromptChange(localPrompt);
+  };
+
+  // Sync to parent before generating
+  const handleGenerate = () => {
+    onPromptChange(localPrompt);
+    onGenerate();
+  };
 
   return (
     <>
@@ -95,12 +115,14 @@ export function GenerationSettingsPanel({
 
       <div className='relative'>
         <Textarea
+          disableAutosize
           aria-label='Custom prompt'
           description='Auto-generated prompt from selected category. Edit or refresh for variations.'
           label='Prompt'
-          minRows={3}
-          value={prompt}
-          onChange={e => onPromptChange(e.target.value)}
+          rows={5}
+          value={localPrompt}
+          onBlur={handleBlur}
+          onChange={e => setLocalPrompt(e.target.value)}
         />
         <Button
           isIconOnly
@@ -118,7 +140,7 @@ export function GenerationSettingsPanel({
         color='primary'
         isDisabled={!canGenerate || isGenerating}
         size='lg'
-        onPress={onGenerate}
+        onPress={handleGenerate}
       >
         {isGenerating ? (
           <div className='flex items-center gap-2'>
@@ -152,4 +174,4 @@ export function GenerationSettingsPanel({
       )}
     </>
   );
-}
+});

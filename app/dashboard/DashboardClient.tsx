@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { Card } from '@heroui/card';
 
 import { generateWithFal, type ImageSize } from '@/lib/fal-client';
@@ -14,7 +14,13 @@ import { GeneratedGallery } from '@/components/dashboard/GeneratedGallery';
 import { FirstTimeUserModal } from '@/components/first-time-user-modal';
 import { API_CONFIG, CREDITS_CONFIG } from '@/config/app-config';
 
-type GeneratedItem = { id: string; url: string };
+type GeneratedItem = {
+  id: string;
+  url: string;
+  originalUrl: string;
+  generationId: string;
+  imageIndex: number;
+};
 
 export function DashboardClient() {
   const { data: session } = useSession();
@@ -41,6 +47,18 @@ export function DashboardClient() {
     );
   }, [previewUrl, referenceUrl, creditInfo]);
 
+  // Define loadRandomPrompt before the useEffect that uses it
+  const loadRandomPrompt = useCallback(() => {
+    const categoryPresets = PROMPT_LIBRARY[category] || [];
+
+    if (categoryPresets.length > 0) {
+      const randomPreset =
+        categoryPresets[Math.floor(Math.random() * categoryPresets.length)];
+
+      setPrompt(randomPreset?.prompt || '');
+    }
+  }, [category]);
+
   // Load existing generations and credits on component mount
   useEffect(() => {
     if (session?.user.id) {
@@ -54,18 +72,7 @@ export function DashboardClient() {
     if (category) {
       loadRandomPrompt();
     }
-  }, [category]);
-
-  const loadRandomPrompt = () => {
-    const categoryPresets = PROMPT_LIBRARY[category] || [];
-
-    if (categoryPresets.length > 0) {
-      const randomPreset =
-        categoryPresets[Math.floor(Math.random() * categoryPresets.length)];
-
-      setPrompt(randomPreset?.prompt || '');
-    }
-  };
+  }, [category, loadRandomPrompt]);
 
   const loadExistingGenerations = async () => {
     try {
@@ -74,12 +81,23 @@ export function DashboardClient() {
 
       if (response.ok) {
         const data = await response.json();
-        // Convert generations to items format
+        // Convert generations to items format, preferring upscaled URLs when available
         const existingItems: GeneratedItem[] = data.generations.flatMap(
-          (gen: { id: string; imageUrls: string[] }) =>
+          (gen: {
+            id: string;
+            imageUrls: string[];
+            upscaledImageUrls?: string[];
+          }) =>
             gen.imageUrls.map((url: string, idx: number) => ({
               id: `${gen.id}-${idx}`,
-              url: url,
+              originalUrl: url,
+              url:
+                gen.upscaledImageUrls?.[idx] &&
+                gen.upscaledImageUrls[idx] !== ''
+                  ? gen.upscaledImageUrls[idx]
+                  : url,
+              generationId: gen.id,
+              imageIndex: idx,
             }))
         );
 
@@ -92,7 +110,7 @@ export function DashboardClient() {
     }
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = useCallback(async () => {
     if (!canGenerate) return;
 
     // Ensure we have a reference image
@@ -137,16 +155,10 @@ export function DashboardClient() {
         Array.isArray(result.images) &&
         result.images.length > 0
       ) {
-        const newItem = {
-          id: `${result.requestId}-0`,
-          url: result.images[0].url,
-        };
-
-        setItems(prev => [newItem, ...prev]); // Add to beginning for newest first
-        setLoadingSpinners([]); // Clear loading spinners
-
-        // Record the generation metadata in the database for history tracking
+        // Record the generation metadata in the database first to get the generationId
         // Credits were already deducted in the proxy, so this just saves the record
+        let generationId = '';
+
         try {
           const response = await fetch(API_CONFIG.ENDPOINTS.RECORD_GENERATION, {
             method: 'POST',
@@ -166,6 +178,9 @@ export function DashboardClient() {
           });
 
           if (response.ok) {
+            const data = await response.json();
+
+            generationId = data.generationId || '';
             // Refresh credits from server to get accurate breakdown
             await fetchCredits();
           }
@@ -175,6 +190,17 @@ export function DashboardClient() {
           // Refresh credits anyway to show the deduction
           await fetchCredits();
         }
+
+        const newItem = {
+          id: `${result.requestId}-0`,
+          url: result.images[0].url,
+          originalUrl: result.images[0].url,
+          generationId: generationId || result.requestId,
+          imageIndex: 0,
+        };
+
+        setItems(prev => [newItem, ...prev]); // Add to beginning for newest first
+        setLoadingSpinners([]); // Clear loading spinners
       } else {
         throw new Error('Invalid response from FAL API');
       }
@@ -201,7 +227,15 @@ export function DashboardClient() {
       setIsGenerating(false);
       setLoadingSpinners([]); // Clear loading spinners on error too
     }
-  };
+  }, [
+    canGenerate,
+    referenceUrl,
+    creditInfo,
+    prompt,
+    category,
+    imageSize,
+    fetchCredits,
+  ]);
 
   return (
     <ErrorBoundary>
@@ -243,6 +277,20 @@ export function DashboardClient() {
                   isLoadingExisting={isLoadingExisting}
                   items={items}
                   loadingSpinners={loadingSpinners}
+                  onItemDeleted={itemId => {
+                    // Remove the deleted item from the list
+                    setItems(prevItems =>
+                      prevItems.filter(item => item.id !== itemId)
+                    );
+                  }}
+                  onItemUpdated={(itemId, newUrl) => {
+                    // Update the item with the upscaled URL
+                    setItems(prevItems =>
+                      prevItems.map(item =>
+                        item.id === itemId ? { ...item, url: newUrl } : item
+                      )
+                    );
+                  }}
                 />
               </div>
             </div>

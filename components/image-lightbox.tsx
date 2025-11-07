@@ -15,6 +15,7 @@ interface ImageLightboxProps {
 export function ImageLightbox({ src, alt, children }: ImageLightboxProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isUpscaling, setIsUpscaling] = useState(false);
 
   return (
     <>
@@ -95,26 +96,55 @@ export function ImageLightbox({ src, alt, children }: ImageLightboxProps) {
                   isIconOnly
                   className='absolute bottom-4 right-4 bg-black/20 backdrop-blur-sm hover:bg-black/40'
                   color='primary'
+                  isLoading={isUpscaling}
                   size='lg'
                   variant='flat'
                   onPress={async () => {
                     try {
-                      // Fetch the image as a blob to handle CORS properly
-                      const response = await fetch(src);
+                      setIsUpscaling(true);
+                      let downloadUrl = src;
+
+                      // Try to upscale for paid users
+                      try {
+                        const upscaleResponse = await fetch('/api/upscale', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ imageUrl: src }),
+                        });
+
+                        if (upscaleResponse.ok) {
+                          const { upscaledImageUrl } =
+                            await upscaleResponse.json();
+
+                          downloadUrl = upscaledImageUrl;
+                          console.log('Image upscaled successfully');
+                        } else if (upscaleResponse.status === 403) {
+                          // User is not paid, use original image
+                          console.log(
+                            'Upscaling not available - downloading original'
+                          );
+                        } else {
+                          console.warn(
+                            'Upscaling failed, using original image'
+                          );
+                        }
+                      } catch (upscaleError) {
+                        console.warn(
+                          'Upscaling failed, using original image:',
+                          upscaleError
+                        );
+                      }
+
+                      // Download the image (upscaled or original)
+                      const response = await fetch(downloadUrl);
                       const blob = await response.blob();
-
-                      // Create a URL for the blob
                       const blobUrl = window.URL.createObjectURL(blob);
-
-                      // Create download link
                       const link = document.createElement('a');
 
                       link.href = blobUrl;
-                      link.download = `generated-image-${Date.now()}.jpg`;
+                      link.download = `picturemeai-${Date.now()}.jpg`;
                       document.body.appendChild(link);
                       link.click();
-
-                      // Clean up
                       document.body.removeChild(link);
                       window.URL.revokeObjectURL(blobUrl);
                     } catch (error) {
@@ -123,9 +153,11 @@ export function ImageLightbox({ src, alt, children }: ImageLightboxProps) {
                       const link = document.createElement('a');
 
                       link.href = src;
-                      link.download = `generated-image-${Date.now()}.jpg`;
+                      link.download = `picturemeai-${Date.now()}.jpg`;
                       link.target = '_blank';
                       link.click();
+                    } finally {
+                      setIsUpscaling(false);
                     }
                   }}
                 >

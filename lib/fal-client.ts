@@ -62,3 +62,41 @@ export async function generateWithFal(
 
   return { requestId: String(result.requestId), images };
 }
+
+export type UpscaleParams = {
+  imageUrl: string;
+  scale?: number;
+  model?: 'RealESRGAN_x2plus' | 'RealESRGAN_x4plus';
+};
+
+export type UpscaleResult = {
+  requestId: string;
+  image: { url: string };
+};
+
+export async function upscaleWithFal(
+  params: UpscaleParams,
+  onProgress?: (log: string) => void
+): Promise<UpscaleResult> {
+  const { imageUrl, scale = 3, model = 'RealESRGAN_x2plus' } = params;
+
+  const result = await fal.subscribe('fal-ai/esrgan', {
+    input: {
+      image_url: imageUrl,
+      scale,
+      model,
+      output_format: 'jpeg',
+    },
+    logs: Boolean(onProgress),
+    onQueueUpdate: update => {
+      if (update.status === 'IN_PROGRESS' && onProgress) {
+        update.logs.map(l => l.message).forEach(onProgress);
+      }
+    },
+  });
+
+  return {
+    requestId: String(result.requestId),
+    image: { url: (result.data as { image: { url: string } }).image.url },
+  };
+}

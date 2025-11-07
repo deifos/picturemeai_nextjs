@@ -122,23 +122,24 @@ model Generation {
   id          String   @id @default(cuid())
   userId      String
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   // Generation data
   prompt      String
   category    String
   numImages   Int
   imageUrls   String[] // Array of generated image URLs
-  
+  upscaledImageUrls String[] @default([]) // Array of upscaled image URLs (matches imageUrls indices)
+
   // Generation settings
   imageSize   String
   style       String
   renderingSpeed String
-  
+
   // Tracking
   creditsUsed Int      @default(1) // Usually 1 credit per generation
   usedFreeCredit Boolean @default(false) // Whether this generation used a free credit
   falRequestId String? // FAL request ID for tracking
-  
+
   createdAt   DateTime @default(now())
 
   @@map("generation")

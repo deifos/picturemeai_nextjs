@@ -245,3 +245,17 @@ export async function getUserPurchases(userId: string) {
     orderBy: { createdAt: 'desc' },
   });
 }
+
+/**
+ * Check if user is a paid user (has purchased credits)
+ */
+export async function isPaidUser(userId: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { availableCredits: true },
+  });
+
+  // User is considered paid if they have any available credits
+  // (Free users only get 1 free credit and never have availableCredits)
+  return (user?.availableCredits || 0) > 0;
+}

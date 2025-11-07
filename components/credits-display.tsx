@@ -17,20 +17,21 @@ export function CreditsDisplay({
   compact = false,
 }: CreditsDisplayProps) {
   const { creditInfo, fetchCredits } = useCreditsStore();
-  const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const loadCredits = async () => {
       if (creditInfo === null) {
         await fetchCredits();
       }
-      setLoading(false);
     };
 
     loadCredits();
   }, [userId, creditInfo, fetchCredits]);
 
-  if (loading) {
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
     return compact ? (
       <div className='flex items-center gap-2 px-3 py-1 bg-default-100 rounded-full'>
         <div className='animate-pulse'>
